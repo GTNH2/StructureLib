@@ -9,9 +9,11 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        gradlePluginPortal()
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2.1'
+        classpath "se.bjurr.gitchangelog:git-changelog-gradle-plugin:1.65"
     }
 }
 
