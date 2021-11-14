@@ -3,6 +3,7 @@ package com.gtnewhorizon.structurelib.alignment.constructable;
 import com.gtnewhorizon.structurelib.StructureLib;
 import com.gtnewhorizon.structurelib.StructureLibAPI;
 import com.gtnewhorizon.structurelib.alignment.IAlignment;
+import com.gtnewhorizon.structurelib.alignment.IAlignmentProvider;
 import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -37,13 +38,17 @@ public class ConstructableUtility {
                     if (constructable != null) {
                         constructable.construct(aStack, false);
                     }
-                } else if (tTileEntity instanceof IConstructable) {
-                    ((IConstructable) tTileEntity).construct(aStack, false);
                 } else if (IMultiblockInfoContainer.contains(tTileEntity.getClass())) {
                     IMultiblockInfoContainer<TileEntity> iMultiblockInfoContainer = IMultiblockInfoContainer.get(tTileEntity.getClass());
-                    if (tTileEntity instanceof IAlignment) {
-                        iMultiblockInfoContainer.construct(aStack, false, tTileEntity,
-                                ((IAlignment) tTileEntity).getExtendedFacing(),((IAlignment) tTileEntity).getSkew());
+                    if (tTileEntity instanceof IAlignmentProvider) {
+                        IAlignment alignment=((IAlignmentProvider) tTileEntity).getAlignment();
+                        if(alignment==null){
+                            iMultiblockInfoContainer.construct(aStack, false, tTileEntity,
+                                    ExtendedFacing.of(ForgeDirection.getOrientation(aSide)));
+                        }else {
+                            iMultiblockInfoContainer.construct(aStack, false, tTileEntity,
+                                    alignment.getExtendedFacing(),alignment.getSkew());
+                        }
                     } else {
                         iMultiblockInfoContainer.construct(aStack, false, tTileEntity,
                                 ExtendedFacing.of(ForgeDirection.getOrientation(aSide)));
@@ -59,16 +64,17 @@ public class ConstructableUtility {
                     constructable.construct(aStack, true);
                     StructureLib.addClientSideChatMessages(constructable.getStructureDescription(aStack));
                 }
-            } else if (tTileEntity instanceof IConstructable) {
-                IConstructable constructable = (IConstructable) tTileEntity;
-                constructable.construct(aStack, true);
-                StructureLib.addClientSideChatMessages(constructable.getStructureDescription(aStack));
-                return false;
             } else if (IMultiblockInfoContainer.contains(tTileEntity.getClass())) {
                 IMultiblockInfoContainer<TileEntity> iMultiblockInfoContainer = IMultiblockInfoContainer.get(tTileEntity.getClass());
-                if (tTileEntity instanceof IAlignment) {
-                    iMultiblockInfoContainer.construct(aStack, true, tTileEntity,
-                            ((IAlignment) tTileEntity).getExtendedFacing(),((IAlignment) tTileEntity).getSkew());
+                if (tTileEntity instanceof IAlignmentProvider) {
+                    IAlignment alignment=((IAlignmentProvider) tTileEntity).getAlignment();
+                    if(alignment==null){
+                        iMultiblockInfoContainer.construct(aStack, true, tTileEntity,
+                                ExtendedFacing.of(ForgeDirection.getOrientation(aSide)));
+                    }else {
+                        iMultiblockInfoContainer.construct(aStack, true, tTileEntity,
+                                alignment.getExtendedFacing(),alignment.getSkew());
+                    }
                 } else {
                     iMultiblockInfoContainer.construct(aStack, true, tTileEntity,
                             ExtendedFacing.of(ForgeDirection.getOrientation(aSide)));

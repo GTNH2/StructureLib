@@ -7,10 +7,15 @@ import net.minecraft.item.ItemStack;
 /**
  * Created by Tec on 24.03.2017.
  */
-public interface IConstructable {
+public interface IConstructable extends IConstructableProvider {
     void construct(ItemStack stackSize, boolean hintsOnly);
 
     @SideOnly(Side.CLIENT)
     String[] getStructureDescription(ItemStack stackSize);
+
+    @Override
+    default IConstructable getConstructable(){
+        return this;
+    }
 }
 
