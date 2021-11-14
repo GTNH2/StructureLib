@@ -19,7 +19,7 @@ public class ItemSkewTool extends Item {
     public ItemSkewTool() {
         setMaxStackSize(1);
         setUnlocalizedName("structurelib.skewTool");
-        setTextureName(MOD_ID + ":skewTool");
+        setTextureName(MOD_ID + ":itemSkewTool");
         setCreativeTab(StructureLib.creativeTab);
     }
 
