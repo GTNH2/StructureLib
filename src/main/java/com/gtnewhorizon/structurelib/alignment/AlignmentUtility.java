@@ -62,12 +62,12 @@ public class AlignmentUtility {
                             skews[1]=abcHit[2];
                             break;
                         case DOWN:
-                            skews[2]=-abcHit[3];
-                            skews[3]=abcHit[4];
+                            skews[2]=-abcHit[0];
+                            skews[3]=abcHit[2];
                             break;
                         case UP:
-                            skews[2]=abcHit[3];
-                            skews[3]=-abcHit[4];
+                            skews[2]=abcHit[0];
+                            skews[3]=-abcHit[2];
                             break;
                         case BACK:
                             skews[4]=-abcHit[0];
