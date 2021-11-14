@@ -7,12 +7,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.gtnewhorizon.structurelib.alignment.IAlignment.STATES_COUNT;
 
 public interface IAlignmentLimits {
-
     IAlignmentLimits UNLIMITED = (direction, rotation, flip) -> true;
+    Predicate<Skew> NO_SKEW = Skew::isNotApplied;
 
     boolean isNewExtendedFacingValid(ForgeDirection direction, Rotation rotation, Flip flip);
 
@@ -21,6 +22,10 @@ public interface IAlignmentLimits {
                 alignment.getDirection(),
                 alignment.getRotation(),
                 alignment.getFlip());
+    }
+
+    default boolean isNewSkewValid(Skew skew){
+        return NO_SKEW.test(skew);
     }
 
     static IAlignmentLimits allowOnly(ExtendedFacing... allowedFacings) {
@@ -41,6 +46,7 @@ public interface IAlignmentLimits {
 
     class Builder {
         protected final boolean[] validStates = new boolean[STATES_COUNT];
+        protected Predicate<Skew> predicate=NO_SKEW;
 
         private Builder() {}
 
@@ -134,8 +140,13 @@ public interface IAlignmentLimits {
             return this;
         }
 
+        public Builder skewPredicate(Predicate<Skew> predicate){
+            this.predicate=predicate==null?NO_SKEW:predicate;
+            return this;
+        }
+
         public IAlignmentLimits build() {
-            return new AlignmentLimits(validStates);
+            return new AlignmentLimits(validStates, predicate);
         }
     }
 }

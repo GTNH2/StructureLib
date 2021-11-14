@@ -6,6 +6,8 @@ import com.gtnewhorizon.structurelib.alignment.enumerable.Flip;
 import com.gtnewhorizon.structurelib.alignment.enumerable.Rotation;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import static com.gtnewhorizon.structurelib.alignment.Skew.NONE;
+
 public interface IAlignment extends IAlignmentLimits,IAlignmentProvider {
     int DIRECTIONS_COUNT= Direction.VALUES.length;
     int ROTATIONS_COUNT= Rotation.VALUES.length;
@@ -179,5 +181,33 @@ public interface IAlignment extends IAlignmentLimits,IAlignmentProvider {
                 alignment.getDirection(),
                 alignment.getRotation(),
                 alignment.getFlip());
+    }
+
+    default Skew getSkew(){
+        return NONE;
+    }
+
+    default void setSkew(Skew skew){}
+
+    default boolean toolSetSkew(Skew skew) {
+        if(skew==null){
+            checkedSetSkew(NONE);
+            return true;
+        }else {
+            return checkedSetSkew(skew);
+        }
+    }
+
+    default boolean checkedSetSkew(Skew skew){
+        if (isNewSkewValid(skew) || skew.isNotApplied()){
+            setSkew(skew);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    default boolean isNewSkewValid(Skew skew){
+        return getAlignmentLimits().isNewSkewValid(skew);
     }
 }

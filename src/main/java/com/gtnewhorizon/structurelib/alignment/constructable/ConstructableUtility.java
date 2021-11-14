@@ -43,7 +43,7 @@ public class ConstructableUtility {
                     IMultiblockInfoContainer<TileEntity> iMultiblockInfoContainer = IMultiblockInfoContainer.get(tTileEntity.getClass());
                     if (tTileEntity instanceof IAlignment) {
                         iMultiblockInfoContainer.construct(aStack, false, tTileEntity,
-                                ((IAlignment) tTileEntity).getExtendedFacing());
+                                ((IAlignment) tTileEntity).getExtendedFacing(),((IAlignment) tTileEntity).getSkew());
                     } else {
                         iMultiblockInfoContainer.construct(aStack, false, tTileEntity,
                                 ExtendedFacing.of(ForgeDirection.getOrientation(aSide)));
@@ -68,7 +68,7 @@ public class ConstructableUtility {
                 IMultiblockInfoContainer<TileEntity> iMultiblockInfoContainer = IMultiblockInfoContainer.get(tTileEntity.getClass());
                 if (tTileEntity instanceof IAlignment) {
                     iMultiblockInfoContainer.construct(aStack, true, tTileEntity,
-                            ((IAlignment) tTileEntity).getExtendedFacing());
+                            ((IAlignment) tTileEntity).getExtendedFacing(),((IAlignment) tTileEntity).getSkew());
                 } else {
                     iMultiblockInfoContainer.construct(aStack, true, tTileEntity,
                             ExtendedFacing.of(ForgeDirection.getOrientation(aSide)));

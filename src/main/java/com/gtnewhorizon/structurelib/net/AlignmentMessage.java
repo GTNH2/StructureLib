@@ -3,6 +3,7 @@ package com.gtnewhorizon.structurelib.net;
 import com.gtnewhorizon.structurelib.StructureLib;
 import com.gtnewhorizon.structurelib.alignment.IAlignment;
 import com.gtnewhorizon.structurelib.alignment.IAlignmentProvider;
+import com.gtnewhorizon.structurelib.alignment.Skew;
 import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -20,6 +21,7 @@ public abstract class AlignmentMessage implements IMessage {
     int mPosZ;
     int mPosD;
     int mAlign;
+    int[] mSkew;
 
     public AlignmentMessage() {
     }
@@ -32,6 +34,7 @@ public abstract class AlignmentMessage implements IMessage {
         mPosZ = tTag.getInteger("posz");
         mPosD = tTag.getInteger("posd");
         mAlign = tTag.getInteger("rotf");
+        mSkew = tTag.getIntArray("skew");
     }
 
     @Override
@@ -42,6 +45,7 @@ public abstract class AlignmentMessage implements IMessage {
         tFXTag.setInteger("posz", mPosZ);
         tFXTag.setInteger("posd", mPosD);
         tFXTag.setInteger("rotf", mAlign);
+        tFXTag.setIntArray("skew", mSkew);
 
         ByteBufUtils.writeTag(pBuffer, tFXTag);
     }
@@ -58,14 +62,16 @@ public abstract class AlignmentMessage implements IMessage {
         mPosZ = base.zCoord;
         mPosD = base.getWorldObj().provider.dimensionId;
         mAlign = alignment.getExtendedFacing().getIndex();
+        mSkew= alignment.getSkew().asFloatsInIntFormat();
     }
 
-    private AlignmentMessage(World world, int x, int y, int z, IAlignment front) {
+    private AlignmentMessage(World world, int x, int y, int z, IAlignment alignment) {
         mPosX = x;
         mPosY = y;
         mPosZ = z;
         mPosD = world.provider.dimensionId;
-        mAlign = front.getExtendedFacing().getIndex();
+        mAlign = alignment.getExtendedFacing().getIndex();
+        mSkew= alignment.getSkew().asFloatsInIntFormat();
     }
 
     public static class AlignmentQuery extends AlignmentMessage {
@@ -91,6 +97,7 @@ public abstract class AlignmentMessage implements IMessage {
             mPosZ = query.mPosZ;
             mPosD = query.mPosD;
             mAlign = query.mAlign;
+            mSkew = query.mSkew;
         }
 
         public AlignmentData(IAlignmentProvider provider) {
@@ -111,6 +118,11 @@ public abstract class AlignmentMessage implements IMessage {
                     IAlignment alignment = ((IAlignmentProvider) te).getAlignment();
                     if (alignment != null) {
                         alignment.setExtendedFacing(ExtendedFacing.byIndex(pMessage.mAlign));
+                        float[] skews=new float[pMessage.mSkew.length];
+                        for (int i = 0; i < pMessage.mSkew.length; i++) {
+                            skews[i]=Float.intBitsToFloat(pMessage.mSkew[i]);
+                        }
+                        alignment.setSkew(Skew.getSkew(skews));
                     }
                 }
             }
@@ -129,6 +141,8 @@ public abstract class AlignmentMessage implements IMessage {
                     if (alignment == null)
                         return null;
                     pMessage.mAlign = alignment.getExtendedFacing().getIndex();
+                    pMessage.mSkew = alignment.getSkew().asFloatsInIntFormat();
+
                     return new AlignmentData(pMessage);
                 }
             }

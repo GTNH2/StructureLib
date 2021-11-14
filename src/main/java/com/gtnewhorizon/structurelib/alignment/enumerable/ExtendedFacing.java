@@ -132,10 +132,13 @@ public enum ExtendedFacing {
     private static final EnumMap<ForgeDirection, ImmutableSet<ExtendedFacing>> LOOKUP_BY_DIRECTION = stream(VALUES).collect(groupingBy(ExtendedFacing::getDirection, () -> new EnumMap<>(ForgeDirection.class), collectingAndThen(toSet(), ImmutableSet::copyOf)));
     private static final EnumMap<Rotation, ImmutableSet<ExtendedFacing>> LOOKUP_BY_ROTATION = stream(VALUES).collect(groupingBy(ExtendedFacing::getRotation, () -> new EnumMap<>(Rotation.class), collectingAndThen(toSet(), ImmutableSet::copyOf)));
     private static final EnumMap<Flip, ImmutableSet<ExtendedFacing>> LOOKUP_BY_FLIP = stream(VALUES).collect(groupingBy(ExtendedFacing::getFlip, () -> new EnumMap<>(Flip.class), collectingAndThen(toSet(), ImmutableSet::copyOf)));
+
     private final ForgeDirection direction;
-    private final ForgeDirection a, b, c;
     private final Rotation rotation;
     private final Flip flip;
+
+    private final ForgeDirection a, b, c;
+    private final ABCDirection x, y, z;
 
     private final String name;
     private final IntegerAxisSwap integerAxisSwap;
@@ -216,6 +219,22 @@ public enum ExtendedFacing {
         this.b=b;
         this.c=c;
         integerAxisSwap =new IntegerAxisSwap(a,b,c);
+
+        ABCDirection x=null,y=null,z=null;
+        for (int i = 0; i < ABCDirection.VALUES.length; i++) {
+            ABCDirection abc=ABCDirection.VALUES[i];
+            ForgeDirection direction=getRelativeInWorld(abc);
+            if(a==direction){
+                x=abc;
+            }else if(b==direction){
+                y=abc;
+            }else if(c==direction){
+                z=abc;
+            }
+        }
+        this.x=x;
+        this.y=y;
+        this.z=z;
     }
 
     public static ExtendedFacing of(ForgeDirection direction, Rotation rotation, Flip flip){
@@ -363,5 +382,81 @@ public enum ExtendedFacing {
 
     public ForgeDirection getRelativeForwardInWorld() {
         return c.getOpposite();
+    }
+
+    public ForgeDirection getRelativeInWorld(ABCDirection abcDirection){
+        if(abcDirection==null){
+            return null;
+        }
+        switch (abcDirection){
+            case LEFT:
+                return getRelativeLeftInWorld();
+            case RIGHT:
+                return getRelativeRightInWorld();
+            case DOWN:
+                return getRelativeDownInWorld();
+            case UP:
+                return getRelativeUpInWorld();
+            case BACK:
+                return getRelativeBackInWorld();
+            case FORWARD:
+                return getRelativeForwardInWorld();
+            case UNKNOWN:
+                return ForgeDirection.UNKNOWN;
+            default:
+                throw new RuntimeException("Cannot happen i hope...");
+        }
+    }
+
+    public ForgeDirection getRelativeInWorld(ForgeDirection abcDirection){
+        return getRelativeInWorld(ABCDirection.forForgeDirection(abcDirection));
+    }
+
+    public ABCDirection getWorldDownInRelative() {
+        return y;
+    }
+
+    public ABCDirection getWorldUpInRelative() {
+        return y.getOpposite();
+    }
+
+    public ABCDirection getWorldWestInRelative() {
+        return x;
+    }
+
+    public ABCDirection getWorldEastInRelative() {
+        return x.getOpposite();
+    }
+
+    public ABCDirection getWorldSouthInRelative() {
+        return z;
+    }
+
+    public ABCDirection getWorldNorthInRelative() {
+        return z.getOpposite();
+    }
+
+    public ABCDirection getWorldInRelative(ForgeDirection inWorldDirection){
+        if(inWorldDirection==null){
+            return null;
+        }
+        switch (inWorldDirection){
+            case DOWN:
+                return getWorldDownInRelative();
+            case UP:
+                return getWorldUpInRelative();
+            case NORTH:
+                return getWorldNorthInRelative();
+            case SOUTH:
+                return getWorldSouthInRelative();
+            case WEST:
+                return getWorldWestInRelative();
+            case EAST:
+                return getWorldEastInRelative();
+            case UNKNOWN:
+                return ABCDirection.UNKNOWN;
+            default:
+                throw new RuntimeException("Cannot happen i hope...");
+        }
     }
 }

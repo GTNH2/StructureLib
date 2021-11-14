@@ -1,5 +1,6 @@
 package com.gtnewhorizon.structurelib;
 
+import com.gtnewhorizon.structurelib.item.ItemSkewTool;
 import com.gtnewhorizon.structurelib.net.AlignmentMessage;
 import com.gtnewhorizon.structurelib.block.BlockHint;
 import com.gtnewhorizon.structurelib.item.ItemBlockHint;
@@ -44,7 +45,7 @@ public class StructureLib {
 
 	static Block blockHint;
 	static Item itemBlockHint;
-	static Item itemFrontRotationTool;
+	static Item itemFrontRotationTool, itemSkewTool;
 	static Item itemConstructableTrigger;
 	public static final CreativeTabs creativeTab = new CreativeTabs("structurelib") {
 		@Override
@@ -60,6 +61,7 @@ public class StructureLib {
 		GameRegistry.registerBlock(blockHint = new BlockHint(), ItemBlockHint.class, "blockhint");
 		itemBlockHint = ItemBlock.getItemFromBlock(StructureLibAPI.getBlockHint());
 		GameRegistry.registerItem(itemFrontRotationTool = new ItemFrontRotationTool(), itemFrontRotationTool.getUnlocalizedName());
+		GameRegistry.registerItem(itemSkewTool = new ItemSkewTool(), itemSkewTool.getUnlocalizedName());
 		GameRegistry.registerItem(itemConstructableTrigger = new ItemConstructableTrigger(), itemConstructableTrigger.getUnlocalizedName());
 		proxy.preInit(e);
 	}
