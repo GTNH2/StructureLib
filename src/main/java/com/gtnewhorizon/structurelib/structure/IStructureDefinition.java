@@ -56,7 +56,7 @@ public interface IStructureDefinition<T> {
 							   int basePositionX, int basePositionY, int basePositionZ,
 							   int basePositionA, int basePositionB, int basePositionC,
 							   boolean forceCheckAllBlocks) {
-		if(skew==null || skew.isNotApplied()){
+		if(skew==null || skew.isNone()){
 			return iterate(object, null, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
 					basePositionA, basePositionB, basePositionC, false, forceCheckAllBlocks);
 		}else {
@@ -68,7 +68,7 @@ public interface IStructureDefinition<T> {
 	default boolean hints(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing, Skew skew,
 						  int basePositionX, int basePositionY, int basePositionZ,
 						  int basePositionA, int basePositionB, int basePositionC) {
-		if(skew==null || skew.isNotApplied()){
+		if(skew==null || skew.isNone()){
 			return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
 					basePositionA, basePositionB, basePositionC, true, null);
 		}else {
@@ -80,7 +80,7 @@ public interface IStructureDefinition<T> {
 	default boolean build(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing, Skew skew,
 						  int basePositionX, int basePositionY, int basePositionZ,
 						  int basePositionA, int basePositionB, int basePositionC) {
-		if(skew==null || skew.isNotApplied()){
+		if(skew==null || skew.isNone()){
 			return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
 					basePositionA, basePositionB, basePositionC, false, null);
 		}else {
@@ -93,7 +93,7 @@ public interface IStructureDefinition<T> {
 								 int basePositionX, int basePositionY, int basePositionZ,
 								 int basePositionA, int basePositionB, int basePositionC,
 								 boolean hintsOnly) {
-		if(skew==null || skew.isNotApplied()){
+		if(skew==null || skew.isNone()){
 			return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
 					basePositionA, basePositionB, basePositionC, hintsOnly, null);
 		}else{

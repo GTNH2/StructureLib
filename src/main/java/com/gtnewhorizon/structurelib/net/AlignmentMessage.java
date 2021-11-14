@@ -15,6 +15,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
+import static com.gtnewhorizon.structurelib.alignment.Skew.LEN;
+
 public abstract class AlignmentMessage implements IMessage {
     int mPosX;
     int mPosY;
@@ -22,6 +24,7 @@ public abstract class AlignmentMessage implements IMessage {
     int mPosD;
     int mAlign;
     int[] mSkew;
+    public static final int[] EMPTY=new int[LEN];
 
     public AlignmentMessage() {
     }
@@ -35,6 +38,9 @@ public abstract class AlignmentMessage implements IMessage {
         mPosD = tTag.getInteger("posd");
         mAlign = tTag.getInteger("rotf");
         mSkew = tTag.getIntArray("skew");
+        if(mSkew.length==0){
+            mSkew=EMPTY;
+        }
     }
 
     @Override
@@ -118,8 +124,8 @@ public abstract class AlignmentMessage implements IMessage {
                     IAlignment alignment = ((IAlignmentProvider) te).getAlignment();
                     if (alignment != null) {
                         alignment.setExtendedFacing(ExtendedFacing.byIndex(pMessage.mAlign));
-                        float[] skews=new float[pMessage.mSkew.length];
-                        for (int i = 0; i < pMessage.mSkew.length; i++) {
+                        float[] skews=new float[LEN];
+                        for (int i = 0; i < LEN; i++) {
                             skews[i]=Float.intBitsToFloat(pMessage.mSkew[i]);
                         }
                         alignment.setSkew(Skew.getSkew(skews));

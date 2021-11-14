@@ -421,11 +421,11 @@ public enum ExtendedFacing {
     }
 
     public ABCDirection getWorldWestInRelative() {
-        return x;
+        return x.getOpposite();
     }
 
     public ABCDirection getWorldEastInRelative() {
-        return x.getOpposite();
+        return x;
     }
 
     public ABCDirection getWorldSouthInRelative() {

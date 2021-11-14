@@ -199,7 +199,7 @@ public interface IAlignment extends IAlignmentLimits,IAlignmentProvider {
     }
 
     default boolean checkedSetSkew(Skew skew){
-        if (isNewSkewValid(skew) || skew.isNotApplied()){
+        if (isNewSkewValid(skew) || skew.isNone()){
             setSkew(skew);
             return true;
         }

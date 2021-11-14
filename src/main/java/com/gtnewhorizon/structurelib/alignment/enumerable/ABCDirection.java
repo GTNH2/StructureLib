@@ -4,8 +4,8 @@ import com.gtnewhorizon.structurelib.util.Vec3Impl;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public enum ABCDirection {
-    LEFT(ForgeDirection.WEST),
-    RIGHT(ForgeDirection.EAST),
+    LEFT(ForgeDirection.EAST),
+    RIGHT(ForgeDirection.WEST),
     DOWN(ForgeDirection.UP),
     UP(ForgeDirection.DOWN),
     BACK(ForgeDirection.SOUTH),
@@ -15,16 +15,11 @@ public enum ABCDirection {
     private final ForgeDirection forgeDirection;
     private final Vec3Impl       axisVector;
     public static final ABCDirection[] VALUES=values();
-    private static final ABCDirection[] MAPPING=new ABCDirection[ForgeDirection.values().length];
+    private static final ABCDirection[] MAPPING=new ABCDirection[]{UP,DOWN,FORWARD,BACK,RIGHT,LEFT,UNKNOWN};
 
     ABCDirection(ForgeDirection forgeDirection) {
         this.forgeDirection = forgeDirection;
         axisVector=new Vec3Impl(forgeDirection.offsetX,forgeDirection.offsetY,forgeDirection.offsetZ);
-        map(this);
-    }
-
-    private static void map(ABCDirection abcDirection){
-        MAPPING[abcDirection.forgeDirection.ordinal()]=abcDirection;
     }
 
     public ForgeDirection getForgeDirection() {
