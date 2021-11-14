@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import static com.gtnewhorizon.structurelib.alignment.IAlignment.STATES_COUNT;
 
 public interface IAlignmentLimits {
-    IAlignmentLimits UNLIMITED = new IAlignmentLimits() {
+    IAlignmentLimits UNLIMITED          = new IAlignmentLimits() {
         @Override
         public boolean isNewExtendedFacingValid(ForgeDirection direction, Rotation rotation, Flip flip) {
             return true;
@@ -23,29 +23,7 @@ public interface IAlignmentLimits {
             return skew.isNone();
         }
     };
-    IAlignmentLimits UNLIMITED_AND_NEAT = new IAlignmentLimits() {
-        @Override
-        public boolean isNewExtendedFacingValid(ForgeDirection direction, Rotation rotation, Flip flip) {
-            return true;
-        }
-
-        @Override
-        public boolean isNewSkewValid(Skew skew) {
-            return skew.isNeat();
-        }
-    };
-    IAlignmentLimits UNLIMITED_AND_VALID = new IAlignmentLimits() {
-        @Override
-        public boolean isNewExtendedFacingValid(ForgeDirection direction, Rotation rotation, Flip flip) {
-            return true;
-        }
-
-        @Override
-        public boolean isNewSkewValid(Skew skew) {
-            return skew.isValid();
-        }
-    };
-    IAlignmentLimits UNLIMITED_AND_ALL = new IAlignmentLimits() {
+    IAlignmentLimits UNLIMITED_AND_SKEW = new IAlignmentLimits() {
         @Override
         public boolean isNewExtendedFacingValid(ForgeDirection direction, Rotation rotation, Flip flip) {
             return true;
@@ -57,8 +35,6 @@ public interface IAlignmentLimits {
         }
     };
     Predicate<Skew> NO_SKEW = Skew::isNone;
-    Predicate<Skew> ALL_VALID_SKEWS = Skew::isValid;
-    Predicate<Skew> ALL_NEAT_SKEWS = Skew::isNeat;
 
     boolean isNewExtendedFacingValid(ForgeDirection direction, Rotation rotation, Flip flip);
 

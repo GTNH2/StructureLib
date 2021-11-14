@@ -41,8 +41,7 @@ public class AlignmentUtility {
         return false;
     }
 
-static TA ta=new TA();
-
+    static TA ta=new TA();
     private static class TA extends TileEntity implements IAlignmentProvider{
         public Skew skew=NONE;
 
@@ -62,7 +61,7 @@ static TA ta=new TA();
 
                 @Override
                 public IAlignmentLimits getAlignmentLimits() {
-                    return UNLIMITED_AND_ALL;
+                    return UNLIMITED_AND_SKEW;
                 }
 
                 @Override
@@ -124,12 +123,12 @@ static TA ta=new TA();
                             skews[5]=abcHit[1];
                             break;
                         case UNKNOWN:
-                            alignment.toolSetSkew(NONE);
+                            alignment.toolSetSkew(null);
                             return true;
                         default:
                             throw new RuntimeException("I like unreachable code.");
                     }
-                    alignment.toolSetSkew(alignment.getSkew().modifySkew(skews));
+                    alignment.toolSetSkew(alignment.getSkew().withAdditionalSkew(skews));
 
                     StructureDefinition.builder().addShape("main",new String[][]{
                             {"01110","11111", "11~11", "11111","01110",},

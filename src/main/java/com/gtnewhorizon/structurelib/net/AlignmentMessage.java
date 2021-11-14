@@ -15,8 +15,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-import static com.gtnewhorizon.structurelib.alignment.Skew.LEN;
-
 public abstract class AlignmentMessage implements IMessage {
     int mPosX;
     int mPosY;
@@ -24,7 +22,7 @@ public abstract class AlignmentMessage implements IMessage {
     int mPosD;
     int mAlign;
     int[] mSkew;
-    public static final int[] EMPTY=new int[LEN];
+    public static final int[] EMPTY=Skew.NONE.toArrayOfKindaInts();
 
     public AlignmentMessage() {
     }
@@ -68,7 +66,7 @@ public abstract class AlignmentMessage implements IMessage {
         mPosZ = base.zCoord;
         mPosD = base.getWorldObj().provider.dimensionId;
         mAlign = alignment.getExtendedFacing().getIndex();
-        mSkew= alignment.getSkew().asFloatsInIntFormat();
+        mSkew= alignment.getSkew().toArrayOfKindaInts();
     }
 
     private AlignmentMessage(World world, int x, int y, int z, IAlignment alignment) {
@@ -77,7 +75,7 @@ public abstract class AlignmentMessage implements IMessage {
         mPosZ = z;
         mPosD = world.provider.dimensionId;
         mAlign = alignment.getExtendedFacing().getIndex();
-        mSkew= alignment.getSkew().asFloatsInIntFormat();
+        mSkew= alignment.getSkew().toArrayOfKindaInts();
     }
 
     public static class AlignmentQuery extends AlignmentMessage {
@@ -124,11 +122,7 @@ public abstract class AlignmentMessage implements IMessage {
                     IAlignment alignment = ((IAlignmentProvider) te).getAlignment();
                     if (alignment != null) {
                         alignment.setExtendedFacing(ExtendedFacing.byIndex(pMessage.mAlign));
-                        float[] skews=new float[LEN];
-                        for (int i = 0; i < LEN; i++) {
-                            skews[i]=Float.intBitsToFloat(pMessage.mSkew[i]);
-                        }
-                        alignment.setSkew(Skew.getSkew(skews));
+                        alignment.setSkew(Skew.fromArrayOfKindsInts(pMessage.mSkew));
                     }
                 }
             }
@@ -147,7 +141,7 @@ public abstract class AlignmentMessage implements IMessage {
                     if (alignment == null)
                         return null;
                     pMessage.mAlign = alignment.getExtendedFacing().getIndex();
-                    pMessage.mSkew = alignment.getSkew().asFloatsInIntFormat();
+                    pMessage.mSkew = alignment.getSkew().toArrayOfKindaInts();
 
                     return new AlignmentData(pMessage);
                 }

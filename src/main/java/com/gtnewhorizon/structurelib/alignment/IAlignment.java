@@ -1,9 +1,6 @@
 package com.gtnewhorizon.structurelib.alignment;
 
-import com.gtnewhorizon.structurelib.alignment.enumerable.Direction;
-import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
-import com.gtnewhorizon.structurelib.alignment.enumerable.Flip;
-import com.gtnewhorizon.structurelib.alignment.enumerable.Rotation;
+import com.gtnewhorizon.structurelib.alignment.enumerable.*;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import static com.gtnewhorizon.structurelib.alignment.Skew.NONE;
@@ -191,8 +188,19 @@ public interface IAlignment extends IAlignmentLimits,IAlignmentProvider {
 
     default boolean toolSetSkew(Skew skew) {
         if(skew==null){
-            checkedSetSkew(NONE);
-            return true;
+            return checkedSetSkew(NONE);
+        }else if(skew==NONE){
+            if(getSkew().isNone()){
+                for (int i = 0, j = getSkew().getMode().ordinal()+1, valuesLength = SkewMode.VALUES.length; i < valuesLength; i++) {
+                    if (checkedSetSkew(NONE.withSkewMode(SkewMode.VALUES[(j + i)%valuesLength]))){
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                checkedSetSkew(NONE.withSkewMode(getSkew().getMode()));
+                return true;
+            }
         }else {
             return checkedSetSkew(skew);
         }
