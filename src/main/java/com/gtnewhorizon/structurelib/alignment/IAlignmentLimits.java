@@ -147,7 +147,7 @@ public interface IAlignmentLimits {
          */
         public Builder ensureNoDuplicates(Flip flip) {
             if (flip == Flip.BOTH || flip == Flip.NONE) {
-                throw new IllegalArgumentException("Preffered Flip must be Horizontal or Vertical");
+                throw new IllegalArgumentException("Preferred Flip must be Horizontal or Vertical");
             }
             flip = flip.getOpposite();
             for (ExtendedFacing value : ExtendedFacing.VALUES) {
