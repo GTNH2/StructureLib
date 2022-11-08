@@ -4,6 +4,7 @@ import com.gtnewhorizon.structurelib.StructureLibAPI;
 import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
 import com.gtnewhorizon.structurelib.structure.adders.IBlockAdder;
 import com.gtnewhorizon.structurelib.structure.adders.ITileAdder;
+import com.gtnewhorizon.structurelib.util.Box;
 import com.gtnewhorizon.structurelib.util.Vec3Impl;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
@@ -11,29 +12,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntBinaryOperator;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
 import static java.lang.Integer.MIN_VALUE;
 
@@ -1295,6 +1281,33 @@ public class StructureUtility {
 		};
 	}
 
+	public static String getPseudoJavaCode(World world,
+										   ExtendedFacing facing,
+										   Box box,
+										   Vec3Impl center,
+										   boolean transpose) {
+		Vec3Impl basePosition = box.getBasePosition(facing);
+		StructureLibAPI.hintParticleTinted(world, basePosition.get0(), basePosition.get1(), basePosition.get2(), StructureLibAPI.getBlockHint(), 13, new short[] {0, 0, 255});
+		StructureLibAPI.hintParticleTinted(world, center.get0(), center.get1(), center.get2(), StructureLibAPI.getBlockHint(), 13, new short[] {255, 0, 0});
+
+		Vec3Impl offsetVector = center.sub(basePosition);
+		offsetVector = facing.getWorldOffset(offsetVector);
+
+		return getPseudoJavaCode(world,
+							     facing,
+							     center.get0(),
+							     center.get1(),
+							     center.get2(),
+							     offsetVector.get0(),
+								 offsetVector.get1(),
+								 offsetVector.get2(),
+							     te -> te.getClass().getCanonicalName(),
+							     box.xSize(),
+							     box.ySize(),
+							     box.zSize(),
+							     transpose);
+	}
+
 	/**
 	 * Used only to get pseudo code in structure writer...
 	 *
@@ -1517,4 +1530,57 @@ public class StructureUtility {
 		return shape;
 	}
 
+	public static ExtendedFacing getExtendedFacingFromLookVector(Vec3 lookVec) {
+		final Vec3 EAST  = Vec3.createVectorHelper(1, 0, 0);
+		final Vec3 UP    = Vec3.createVectorHelper(0, 1, 0);
+		final Vec3 SOUTH = Vec3.createVectorHelper(0, 0, 1);
+
+		double southScalarProjection = lookVec.dotProduct(SOUTH);
+		Vec3 southVectorProjection = Vec3.createVectorHelper(SOUTH.xCoord * southScalarProjection,
+									 			 			 SOUTH.yCoord * southScalarProjection,
+															 SOUTH.zCoord * southScalarProjection);
+
+		double eastScalarProjection = lookVec.dotProduct(EAST);
+		Vec3 eastVectorProjection = Vec3.createVectorHelper(EAST.xCoord * eastScalarProjection,
+															EAST.yCoord * eastScalarProjection,
+															EAST.zCoord * eastScalarProjection);
+
+		double upScalarProjection = lookVec.dotProduct(UP);
+		Vec3 upVectorProjection = Vec3.createVectorHelper(UP.xCoord * upScalarProjection,
+								 						  UP.yCoord * upScalarProjection,
+														  UP.zCoord * upScalarProjection);
+
+		ExtendedFacing facing = null;
+
+		//we want the facing opposite the player look vector
+		int max = maxOrdinal(southVectorProjection.lengthVector(),
+						  	 eastVectorProjection.lengthVector(),
+							 upVectorProjection.lengthVector());
+
+		switch(max) {
+			case 0:
+				facing = (southVectorProjection.zCoord > 0) ? ExtendedFacing.NORTH_NORMAL_NONE : ExtendedFacing.SOUTH_NORMAL_NONE;
+				break;
+			case 1:
+				facing = (eastVectorProjection.xCoord > 0) ? ExtendedFacing.WEST_NORMAL_NONE : ExtendedFacing.EAST_NORMAL_NONE;
+				break;
+			case 2:
+				facing = (upVectorProjection.yCoord > 0) ? ExtendedFacing.DOWN_NORMAL_NONE : ExtendedFacing.UP_NORMAL_NONE;
+				break;
+		}
+
+		return facing;
+	}
+
+	private static int maxOrdinal(double... values) {
+		int maxOrdinal = 0;
+
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] > values[maxOrdinal]) {
+				maxOrdinal = i;
+			}
+		}
+
+		return maxOrdinal;
+	}
 }
