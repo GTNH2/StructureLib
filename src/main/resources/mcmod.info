@@ -1,11 +1,11 @@
 [
 {
-  "modid": "structurelib",
-  "name": "StructureLib",
+  "modid": "${modId}",
+  "name": "${modName}",
   "description": "Multiblocks with ease",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
+  "version": "${modVersion}",
+  "mcversion": "${minecraftVersion}",
+  "url": "https://github.com/GTMEGA/StructureLib",
   "updateUrl": "",
   "authorList": ["glee8e"],
   "credits": "Technus, for the original implementation of this mod as part of TecTech",
