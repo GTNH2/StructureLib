@@ -32,7 +32,7 @@ public class UpdateDebugWriterModePacket implements IMessage, IMessageHandler<Up
     public IMessage onMessage(UpdateDebugWriterModePacket message, MessageContext ctx) {
         ItemStack itemStack = ctx.getServerHandler().playerEntity.inventory.getCurrentItem();
 
-        if (!(itemStack.getItem() instanceof ItemDebugStructureWriter)) {
+        if (itemStack == null || !(itemStack.getItem() instanceof ItemDebugStructureWriter)) {
             return null;
         }
 
