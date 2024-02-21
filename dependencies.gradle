@@ -4,4 +4,7 @@ dependencies {
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.22")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
+
+    compileOnly("mega:carpentersblocks-mc1.7.10:3.3.10-mega:dev")
+
 }

@@ -2,11 +2,14 @@ package com.gtnewhorizon.structurelib.structure;
 
 import com.gtnewhorizon.structurelib.StructureLibAPI;
 import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
+import com.gtnewhorizon.structurelib.compat.carp.CarpInterop;
+import com.gtnewhorizon.structurelib.compat.carp.CarpInteropImpl;
 import com.gtnewhorizon.structurelib.structure.adders.IBlockAdder;
 import com.gtnewhorizon.structurelib.structure.adders.ITileAdder;
 import com.gtnewhorizon.structurelib.util.Box;
 import com.gtnewhorizon.structurelib.util.Vec3Impl;
 import cpw.mods.fml.common.registry.GameRegistry;
+import lombok.val;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -29,6 +32,7 @@ import static java.lang.Integer.MIN_VALUE;
  * (Just import static this class to have a nice fluent syntax while defining structure definitions)
  */
 public class StructureUtility {
+	private static final CarpInterop interop = new CarpInteropImpl();
 	private static final String NICE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz=|!@#$%&()[]{};:<>/?_,.*^'`";
 	@SuppressWarnings("rawtypes")
 	private static final Map<Vec3Impl, IStructureNavigate> STEP = new HashMap<>();
@@ -1322,12 +1326,14 @@ public class StructureUtility {
 		Map<Block, Set<Integer>> blocks = new TreeMap<>(Comparator.comparing(Block::getUnlocalizedName));
 		Set<Class<? extends TileEntity>> tiles = new HashSet<>();
 		Set<String> specialTiles = new HashSet<>();
+		Set<Integer> carpTiles = new HashSet<>();
 		iterate(world, extendedFacing, basePositionX, basePositionY, basePositionZ,
 				basePositionA, basePositionB, basePositionC,
 				sizeA, sizeB, sizeC, ((w, x, y, z) -> {
 					TileEntity tileEntity = w.getTileEntity(x, y, z);
+					Block block = w.getBlock(x, y, z);
+					int metadata = w.getBlockMetadata(x, y, z);
 					if (tileEntity == null) {
-						Block block = w.getBlock(x, y, z);
 						if (block != null && block != Blocks.air) {
 							blocks.compute(block, (b, set) -> {
 								if (set == null) {
@@ -1338,11 +1344,22 @@ public class StructureUtility {
 							});
 						}
 					} else {
-						String classification = tileEntityClassifier.apply(tileEntity);
-						if (classification == null) {
-							tiles.add(tileEntity.getClass());
-						} else
-							specialTiles.add(classification);
+						boolean foundValidCarp = false;
+						if (interop.isACarpentersBlock(block)) {
+							val optHash = interop.getCarpentersHash(block, metadata, tileEntity);
+							if (optHash.isPresent()) {
+								carpTiles.add(optHash.get());
+								foundValidCarp = true;
+							}
+						}
+						if (!foundValidCarp) {
+							String classification = tileEntityClassifier.apply(tileEntity);
+							if (classification == null) {
+								tiles.add(tileEntity.getClass());
+							} else {
+								specialTiles.add(classification);
+							}
+						}
 					}
 				}));
 		Map<String, Character> map = new HashMap<>();
@@ -1385,6 +1402,15 @@ public class StructureUtility {
 				builder.append(c).append(" -> ofSpecialTileAdder(")
 						.append(tile).append(", ...); // You will probably want to change it to something else\n");
 			}
+			builder.append("\nCarpenters Tiles:\n");
+			for (Integer hash : carpTiles) {
+				c = NICE_CHARS.charAt(i++);
+				if (i > NICE_CHARS.length()) {
+					return "Too complicated for nice chars";
+				}
+				map.put("CarpentersTile" + hash, c);
+				builder.append(c).append(" -> ofCarpenterBlock(").append("...);\n");
+			}
 		}
 		builder.append("\nOffsets:\n")
 				.append(basePositionA).append(' ').append(basePositionB).append(' ').append(basePositionC).append('\n');
@@ -1396,19 +1422,30 @@ public class StructureUtility {
 					basePositionA, basePositionB, basePositionC, true,
 					sizeA, sizeB, sizeC, ((w, x, y, z) -> {
 						TileEntity tileEntity = w.getTileEntity(x, y, z);
+						Block block = w.getBlock(x, y, z);
+						int metadata = w.getBlockMetadata(x, y, z);
 						if (tileEntity == null) {
-							Block block = w.getBlock(x, y, z);
 							if (block != null && block != Blocks.air) {
 								builder.append(map.get(block.getUnlocalizedName() + '\0' + block.getDamageValue(world, x, y, z)));
 							} else {
 								builder.append(' ');
 							}
 						} else {
-							String classification = tileEntityClassifier.apply(tileEntity);
-							if (classification == null) {
-								classification = tileEntity.getClass().getCanonicalName();
+							boolean foundValidCarp = false;
+							if (interop.isACarpentersBlock(block)) {
+								val optHash = interop.getCarpentersHash(block, metadata, tileEntity);
+								if (optHash.isPresent()) {
+									builder.append(map.get("CarpentersTile" + optHash.get()));
+									foundValidCarp = true;
+								}
 							}
-							builder.append(map.get(classification));
+							if (!foundValidCarp) {
+								String classification = tileEntityClassifier.apply(tileEntity);
+								if (classification == null) {
+									classification = tileEntity.getClass().getCanonicalName();
+								}
+								builder.append(map.get(classification));
+							}
 						}
 					}),
 					() -> builder.append("\",\""),
@@ -1426,19 +1463,30 @@ public class StructureUtility {
 					basePositionA, basePositionB, basePositionC, false,
 					sizeA, sizeB, sizeC, ((w, x, y, z) -> {
 						TileEntity tileEntity = w.getTileEntity(x, y, z);
+						Block block = w.getBlock(x, y, z);
+						int metadata = w.getBlockMetadata(x, y, z);
 						if (tileEntity == null) {
-							Block block = w.getBlock(x, y, z);
 							if (block != null && block != Blocks.air) {
 								builder.append(map.get(block.getUnlocalizedName() + '\0' + block.getDamageValue(world, x, y, z)));
 							} else {
 								builder.append(' ');
 							}
 						} else {
-							String classification = tileEntityClassifier.apply(tileEntity);
-							if (classification == null) {
-								classification = tileEntity.getClass().getCanonicalName();
+							boolean foundValidCarp = false;
+							if (interop.isACarpentersBlock(block)) {
+								val optHash = interop.getCarpentersHash(block, metadata, tileEntity);
+								if (optHash.isPresent()) {
+									builder.append(map.get("CarpentersTile" + optHash.get()));
+									foundValidCarp = true;
+								}
 							}
-							builder.append(map.get(classification));
+							if (!foundValidCarp) {
+								String classification = tileEntityClassifier.apply(tileEntity);
+								if (classification == null) {
+									classification = tileEntity.getClass().getCanonicalName();
+								}
+								builder.append(map.get(classification));
+							}
 						}
 					}),
 					() -> builder.append("\",\n").append("    \""),
