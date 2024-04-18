@@ -91,20 +91,27 @@ public class ItemDebugStructureWriter extends Item {
     }
 
     private void doStuff(ItemStack itemStack, World world, Vec3Impl pos, EntityPlayer player) {
-        if (pos1 == null) {
-            pos1 = pos;
-            player.addChatMessage(new ChatComponentText("Set Position 1"));
-            StructureLibAPI.hintParticleTinted(world, pos.get0(), pos.get1(), pos.get2(), getBlockHint(), 0, new short[]{255, 0, 255});
-        } else if (pos2 == null) {
-            pos2 = pos;
-            player.addChatMessage(new ChatComponentText("Set Position 2"));
-            StructureLibAPI.hintParticleTinted(world, pos.get0(), pos.get1(), pos.get2(), getBlockHint(), 1, new short[]{255, 0, 255});
+        Mode mode = readModeFromNBT(itemStack);
+        if (mode == Mode.Clear) {
+            StructureUtility.LAST_NICE_CHARS_POINTER = 0;
+            StructureUtility.GLOBAL_MAP.clear();
+            player.addChatMessage(new ChatComponentText("Clearing Globawdl Maps"));
         } else {
-            writeStructure(itemStack, player,pos1,pos2,pos);
-            player.addChatMessage(new ChatComponentText("Writing Structure To Logs"));
-            StructureLib.proxy.clearHints(world);
-            pos1 = null;
-            pos2 = null;
+            if (pos1 == null) {
+                pos1 = pos;
+                player.addChatMessage(new ChatComponentText("Set Position 1"));
+                StructureLibAPI.hintParticleTinted(world, pos.get0(), pos.get1(), pos.get2(), getBlockHint(), 0, new short[]{255, 0, 255});
+            } else if (pos2 == null) {
+                pos2 = pos;
+                player.addChatMessage(new ChatComponentText("Set Position 2"));
+                StructureLibAPI.hintParticleTinted(world, pos.get0(), pos.get1(), pos.get2(), getBlockHint(), 1, new short[]{255, 0, 255});
+            } else {
+                writeStructure(itemStack, player,pos1,pos2,pos);
+                player.addChatMessage(new ChatComponentText("Writing Structure To Logs"));
+                StructureLib.proxy.clearHints(world);
+                pos1 = null;
+                pos2 = null;
+            }
         }
     }
 
@@ -119,13 +126,14 @@ public class ItemDebugStructureWriter extends Item {
         ExtendedFacing facing = StructureUtility.getExtendedFacingFromLookVector(player.getLookVec());
 
         player.addChatMessage(new ChatComponentText(facing.getName2()));
-
+        StructureUtility.USE_GLOBAL_MAP = true;
         String structureDefinition = StructureUtility.getPseudoJavaCode(player.getEntityWorld(),
                 facing,
                 box,
                 posController,
                 player.isSneaking());
 
+        StructureUtility.USE_GLOBAL_MAP = false;
         StructureLib.LOGGER.info(structureDefinition);
     }
 

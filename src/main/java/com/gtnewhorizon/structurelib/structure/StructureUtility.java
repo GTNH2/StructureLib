@@ -32,6 +32,9 @@ import static java.lang.Integer.MIN_VALUE;
  * (Just import static this class to have a nice fluent syntax while defining structure definitions)
  */
 public class StructureUtility {
+	public static final Map<String, Character> GLOBAL_MAP = new HashMap<>();
+	public static int LAST_NICE_CHARS_POINTER = 0;
+	public static boolean USE_GLOBAL_MAP = false;
 	private static final CarpInterop interop = new CarpInteropImpl();
 	private static final String NICE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz=|!@#$%&()[]{};:<>/?_,.*^'`";
 	@SuppressWarnings("rawtypes")
@@ -1309,7 +1312,8 @@ public class StructureUtility {
 							     box.xSize(),
 							     box.ySize(),
 							     box.zSize(),
-							     transpose);
+							     transpose
+				);
 	}
 
 	/**
@@ -1362,10 +1366,13 @@ public class StructureUtility {
 						}
 					}
 				}));
-		Map<String, Character> map = new HashMap<>();
+
+		final Map<String, Character> map = USE_GLOBAL_MAP ? GLOBAL_MAP : new HashMap<>();
 		StringBuilder builder = new StringBuilder();
 		{
 			int i = 0;
+			if (USE_GLOBAL_MAP)
+				i = LAST_NICE_CHARS_POINTER;
 			char c;
 			builder.append("\n\nStructure:\n")
 					.append("\nBlocks:\n");
@@ -1373,6 +1380,12 @@ public class StructureUtility {
 				Block block = entry.getKey();
 				Set<Integer> set = entry.getValue();
 				for (Integer meta : set) {
+					if (map.containsKey(block.getUnlocalizedName() + '\0' + meta)) {
+						val value = map.get(block.getUnlocalizedName() + '\0' + meta);
+						builder.append(value).append(" -> ofBlock...(")
+								.append(block.getUnlocalizedName()).append(", ").append(meta).append(", ...);\n");
+						continue;
+					}
 					c = NICE_CHARS.charAt(i++);
 					if (i > NICE_CHARS.length()) {
 						return "Too complicated for nice chars";
@@ -1384,6 +1397,12 @@ public class StructureUtility {
 			}
 			builder.append("\nTiles:\n");
 			for (Class<? extends TileEntity> tile : tiles) {
+				if (map.containsKey(tile.getCanonicalName())) {
+					val value = map.get(tile.getCanonicalName());
+					builder.append(value).append(" -> ofTileAdder(")
+							.append(tile).append(", ...);\n");
+					continue;
+				}
 				c = NICE_CHARS.charAt(i++);
 				if (i > NICE_CHARS.length()) {
 					return "Too complicated for nice chars";
@@ -1394,6 +1413,12 @@ public class StructureUtility {
 			}
 			builder.append("\nSpecial Tiles:\n");
 			for (String tile : specialTiles) {
+				if (map.containsKey(tile)) {
+					val value = map.get(tile);
+					builder.append(value).append(" -> ofSpecialTileAdder(")
+							.append(tile).append(", ...); // You will probably want to change it to something else\n");
+					continue;
+				}
 				c = NICE_CHARS.charAt(i++);
 				if (i > NICE_CHARS.length()) {
 					return "Too complicated for nice chars";
@@ -1404,6 +1429,11 @@ public class StructureUtility {
 			}
 			builder.append("\nCarpenters Tiles:\n");
 			for (Integer hash : carpTiles) {
+				if (map.containsKey("CarpentersTile" + hash)) {
+					val value = map.get("CarpentersTile" + hash);
+					builder.append(value).append(" -> ofCarpenterBlock(").append("...);\n");
+					continue;
+				}
 				c = NICE_CHARS.charAt(i++);
 				if (i > NICE_CHARS.length()) {
 					return "Too complicated for nice chars";
@@ -1411,6 +1441,8 @@ public class StructureUtility {
 				map.put("CarpentersTile" + hash, c);
 				builder.append(c).append(" -> ofCarpenterBlock(").append("...);\n");
 			}
+			if (USE_GLOBAL_MAP)
+				LAST_NICE_CHARS_POINTER = i;
 		}
 		builder.append("\nOffsets:\n")
 				.append(basePositionA).append(' ').append(basePositionB).append(' ').append(basePositionC).append('\n');
