@@ -1419,12 +1419,14 @@ public class StructureUtility {
 					.append("new String[][]{\n")
 					.append("    {\"");
 			iterate(world, extendedFacing, basePositionX, basePositionY, basePositionZ,
-					basePositionA, basePositionB, basePositionC, true,
+					basePositionA, basePositionB, basePositionC, false,
 					sizeA, sizeB, sizeC, ((w, x, y, z) -> {
 						TileEntity tileEntity = w.getTileEntity(x, y, z);
 						Block block = w.getBlock(x, y, z);
 						int metadata = w.getBlockMetadata(x, y, z);
-						if (tileEntity == null) {
+						if (x == basePositionX && y == basePositionY && z == basePositionZ) {
+							builder.append('~');
+						} else if (tileEntity == null) {
 							if (block != null && block != Blocks.air) {
 								builder.append(map.get(block.getUnlocalizedName() + '\0' + block.getDamageValue(world, x, y, z)));
 							} else {

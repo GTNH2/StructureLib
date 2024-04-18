@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
@@ -30,6 +31,9 @@ public class ItemDebugStructureWriter extends Item {
 
     @SideOnly(Side.CLIENT)
     private IIcon eraserIcon;
+
+    Vec3Impl pos1;
+    Vec3Impl pos2;
 
     private static final String TAG_POS_1 = "pos1";
     private static final String TAG_POS_2 = "pos2";
@@ -82,55 +86,29 @@ public class ItemDebugStructureWriter extends Item {
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
-        Mode mode = readModeFromNBT(itemStack);
-        switch (mode) {
-            case Build:
-            case Clear:
-            case Refresh:
-                doStuff(itemStack, world, Vec3Impl.NULL_VECTOR, player);
-        }
+        doStuff(itemStack, world, Vec3Impl.NULL_VECTOR, player);
         return itemStack;
     }
 
     private void doStuff(ItemStack itemStack, World world, Vec3Impl pos, EntityPlayer player) {
-        int index = player.isSneaking() ? 1 : 0;
-
-        Mode mode = readModeFromNBT(itemStack);
-
-        switch (mode) {
-            case SetCorners:
-                writePosToNBT(itemStack, pos, index == 0 ? TAG_POS_1 : TAG_POS_2);
-
-                if (world.isRemote) {
-                    StructureLibAPI.hintParticleTinted(world, pos.get0(), pos.get1(), pos.get2(), getBlockHint(), index, new short[]{255, 0, 255});
-                }
-            case Refresh:
-                Vec3Impl pos1 = readPosFromNBT(itemStack, TAG_POS_1);
-                Vec3Impl pos2 = readPosFromNBT(itemStack, TAG_POS_2);
-
-                if (pos1 != null && pos2 != null) {
-                    Box box = new Box(pos1, pos2);
-                    box.drawBoundingBox(world);
-                }
-                break;
-            case SetController:
-                writePosToNBT(itemStack, pos, TAG_POS_CONTROLLER);
-                break;
-            case Build:
-                writeStructure(itemStack, player);
-                break;
-            case Clear:
-                itemStack.setTagCompound(null);
-                writeModeToNBT(itemStack, mode);
-                StructureLib.proxy.clearHints(world);
-                break;
+        if (pos1 == null) {
+            pos1 = pos;
+            player.addChatMessage(new ChatComponentText("Set Position 1"));
+            StructureLibAPI.hintParticleTinted(world, pos.get0(), pos.get1(), pos.get2(), getBlockHint(), 0, new short[]{255, 0, 255});
+        } else if (pos2 == null) {
+            pos2 = pos;
+            player.addChatMessage(new ChatComponentText("Set Position 2"));
+            StructureLibAPI.hintParticleTinted(world, pos.get0(), pos.get1(), pos.get2(), getBlockHint(), 1, new short[]{255, 0, 255});
+        } else {
+            writeStructure(itemStack, player,pos1,pos2,pos);
+            player.addChatMessage(new ChatComponentText("Writing Structure To Logs"));
+            StructureLib.proxy.clearHints(world);
+            pos1 = null;
+            pos2 = null;
         }
     }
 
-    private void writeStructure(ItemStack itemStack, EntityPlayer player) {
-        Vec3Impl pos1 = readPosFromNBT(itemStack, TAG_POS_1);
-        Vec3Impl pos2 = readPosFromNBT(itemStack, TAG_POS_2);
-        Vec3Impl posController = readPosFromNBT(itemStack, TAG_POS_CONTROLLER);
+    private void writeStructure(ItemStack itemStack, EntityPlayer player,Vec3Impl pos1, Vec3Impl pos2, Vec3Impl posController) {
 
         if (pos1 == null || pos2 == null || posController == null) {
             return;
@@ -139,6 +117,8 @@ public class ItemDebugStructureWriter extends Item {
         Box box = new Box(pos1, pos2);
 
         ExtendedFacing facing = StructureUtility.getExtendedFacingFromLookVector(player.getLookVec());
+
+        player.addChatMessage(new ChatComponentText(facing.getName2()));
 
         String structureDefinition = StructureUtility.getPseudoJavaCode(player.getEntityWorld(),
                 facing,
