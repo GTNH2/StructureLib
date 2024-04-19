@@ -1300,6 +1300,14 @@ public class StructureUtility {
 		Vec3Impl offsetVector = center.sub(basePosition);
 		offsetVector = facing.getWorldOffset(offsetVector);
 
+		val positionOffset = new int[3];
+		facing.getOffsetABC(new int[] {box.xSize(), box.ySize(),box.zSize()},positionOffset);
+		if (facing != ExtendedFacing.DOWN_NORMAL_NONE && facing != ExtendedFacing.UP_NORMAL_NONE) {
+			positionOffset[0] = Math.abs(positionOffset[0]);
+			positionOffset[1] = Math.abs(positionOffset[1]);
+			positionOffset[2] = Math.abs(positionOffset[2]);
+		}
+
 		return getPseudoJavaCode(world,
 							     facing,
 							     center.get0(),
@@ -1309,9 +1317,9 @@ public class StructureUtility {
 								 offsetVector.get1(),
 								 offsetVector.get2(),
 							     te -> te.getClass().getCanonicalName(),
-							     box.xSize(),
-							     box.ySize(),
-							     box.zSize(),
+								 positionOffset[0],
+								 positionOffset[1],
+								 positionOffset[2],
 							     transpose
 				);
 	}
