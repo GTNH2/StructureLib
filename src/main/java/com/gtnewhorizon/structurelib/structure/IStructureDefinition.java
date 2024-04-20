@@ -2,6 +2,7 @@ package com.gtnewhorizon.structurelib.structure;
 
 import com.gtnewhorizon.structurelib.StructureLib;
 import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
+import jdk.nashorn.internal.ir.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -24,37 +25,37 @@ public interface IStructureDefinition<T> {
 	default boolean check(T object, String piece, World world, ExtendedFacing extendedFacing,
 						  int basePositionX, int basePositionY, int basePositionZ,
 						  int basePositionA, int basePositionB, int basePositionC,
-						  boolean forceCheckAllBlocks) {
+						  boolean forceCheckAllBlocks, FailedCallback<T> callBack) {
 		return iterate(object, null, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
-				basePositionA, basePositionB, basePositionC, false, forceCheckAllBlocks);
+				basePositionA, basePositionB, basePositionC, false, forceCheckAllBlocks,callBack);
 	}
 
 	default boolean hints(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing,
 						  int basePositionX, int basePositionY, int basePositionZ,
-						  int basePositionA, int basePositionB, int basePositionC) {
+						  int basePositionA, int basePositionB, int basePositionC, FailedCallback<T> callBack) {
 		return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
-				basePositionA, basePositionB, basePositionC, true, null);
+				basePositionA, basePositionB, basePositionC, true, null,callBack);
 	}
 
 	default boolean build(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing,
 						  int basePositionX, int basePositionY, int basePositionZ,
-						  int basePositionA, int basePositionB, int basePositionC) {
+						  int basePositionA, int basePositionB, int basePositionC, FailedCallback<T> callBack) {
 		return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
-				basePositionA, basePositionB, basePositionC, false, null);
+				basePositionA, basePositionB, basePositionC, false, null,callBack);
 	}
 
 	default boolean buildOrHints(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing,
 								 int basePositionX, int basePositionY, int basePositionZ,
 								 int basePositionA, int basePositionB, int basePositionC,
-								 boolean hintsOnly) {
+								 boolean hintsOnly, FailedCallback<T> callBack) {
 		return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
-				basePositionA, basePositionB, basePositionC, hintsOnly, null);
+				basePositionA, basePositionB, basePositionC, hintsOnly, null,callBack);
 	}
 
 	static <T> boolean iterate(T object, ItemStack trigger, IStructureElement<T>[] elements, World world, ExtendedFacing extendedFacing,
 							   int basePositionX, int basePositionY, int basePositionZ,
 							   int basePositionA, int basePositionB, int basePositionC,
-							   boolean hintsOnly, Boolean checkBlocksIfNotNullForceCheckAllIfTrue) {
+							   boolean hintsOnly, Boolean checkBlocksIfNotNullForceCheckAllIfTrue, FailedCallback<T> callBack) {
 		if (world.isRemote ^ hintsOnly) {
 			return false;
 		}
@@ -82,6 +83,10 @@ public interface IStructureDefinition<T> {
 
 						if (world.blockExists(xyz[0], xyz[1], xyz[2])) {
 							if (!element.check(object, world, xyz[0], xyz[1], xyz[2])) {
+								if (callBack != null) {
+									callBack.onFail(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
+								}
+
 								if (DEBUG_MODE) {
 									StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] failed @ " +
 											Arrays.toString(xyz) + " " + Arrays.toString(abc));
@@ -89,6 +94,9 @@ public interface IStructureDefinition<T> {
 								return false;
 							}
 						} else {
+							if (callBack != null) {
+								callBack.onFail(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
+							}
 							if (DEBUG_MODE) {
 								StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] !blockExists @ " +
 										Arrays.toString(xyz) + " " + Arrays.toString(abc));
@@ -112,6 +120,9 @@ public interface IStructureDefinition<T> {
 
 						if (world.blockExists(xyz[0], xyz[1], xyz[2])) {
 							if (!element.check(object, world, xyz[0], xyz[1], xyz[2])) {
+								if (callBack != null) {
+									callBack.onFail(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
+								}
 								if (DEBUG_MODE) {
 									StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] failed @ " +
 											Arrays.toString(xyz) + " " + Arrays.toString(abc));
@@ -119,6 +130,9 @@ public interface IStructureDefinition<T> {
 								return false;
 							}
 						} else {
+							if (callBack != null) {
+								callBack.onFail(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
+							}
 							if (DEBUG_MODE) {
 								StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] !blockExists @ " +
 										Arrays.toString(xyz) + " " + Arrays.toString(abc));
@@ -171,5 +185,9 @@ public interface IStructureDefinition<T> {
 
 	static <T> StructureDefinition.Builder<T> builder() {
 		return StructureDefinition.builder();
+	}
+
+	interface FailedCallback<T> {
+		void onFail(int x, int y, int z,int a,int b,int c,World world,T object ,IStructureElement<T> ExpectedElement);
 	}
 }
