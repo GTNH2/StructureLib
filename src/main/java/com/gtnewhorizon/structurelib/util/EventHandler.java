@@ -1,8 +1,10 @@
 package com.gtnewhorizon.structurelib.util;
 
 import com.gtnewhorizon.structurelib.StructureLib;
+import com.gtnewhorizon.structurelib.item.ItemConstructableTrigger;
 import com.gtnewhorizon.structurelib.item.ItemDebugStructureWriter;
 import com.gtnewhorizon.structurelib.item.ItemDebugStructureWriter.Mode;
+import com.gtnewhorizon.structurelib.net.ScrollConstructablePacket;
 import com.gtnewhorizon.structurelib.net.UpdateDebugWriterModePacket;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -36,6 +38,17 @@ public class EventHandler {
 
                         StructureLib.net.sendToServer(new UpdateDebugWriterModePacket(itemStack));
 
+                        event.setCanceled(true);
+                    }
+                } else if (itemStack != null && itemStack.getItem() instanceof ItemConstructableTrigger) {
+                    if (event.dwheel != 0) {
+                        if (itemStack.getItemDamage() == 0) {
+                            itemStack.setItemDamage(1);
+                            StructureLib.net.sendToServer(new ScrollConstructablePacket((byte) 1));
+                        } else {
+                            itemStack.setItemDamage(0);
+                            StructureLib.net.sendToServer(new ScrollConstructablePacket((byte) 0));
+                        }
                         event.setCanceled(true);
                     }
                 }

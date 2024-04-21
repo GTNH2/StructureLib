@@ -7,6 +7,7 @@ import com.gtnewhorizon.structurelib.item.ItemConstructableTrigger;
 import com.gtnewhorizon.structurelib.item.ItemDebugStructureWriter;
 import com.gtnewhorizon.structurelib.item.ItemFrontRotationTool;
 import com.gtnewhorizon.structurelib.net.AlignmentMessage;
+import com.gtnewhorizon.structurelib.net.ScrollConstructablePacket;
 import com.gtnewhorizon.structurelib.net.UpdateDebugWriterModePacket;
 import com.gtnewhorizon.structurelib.proxy.CommonProxy;
 import com.gtnewhorizon.structurelib.util.XSTR;
@@ -47,6 +48,9 @@ public class StructureLib {
 
 		net.registerMessage(UpdateDebugWriterModePacket.class, UpdateDebugWriterModePacket.class, 0, Side.CLIENT);
 		net.registerMessage(UpdateDebugWriterModePacket.class, UpdateDebugWriterModePacket.class, 0, Side.SERVER);
+
+		net.registerMessage(ScrollConstructablePacket.class, ScrollConstructablePacket.class, 0, Side.CLIENT);
+		net.registerMessage(ScrollConstructablePacket.class, ScrollConstructablePacket.class, 0, Side.SERVER);
 	}
 
 	public static final XSTR RANDOM = new XSTR();

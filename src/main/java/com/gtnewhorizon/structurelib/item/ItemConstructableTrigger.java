@@ -5,6 +5,7 @@ import com.gtnewhorizon.structurelib.alignment.constructable.ConstructableUtilit
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -17,8 +18,21 @@ public class ItemConstructableTrigger extends Item {
     public ItemConstructableTrigger() {
         setUnlocalizedName("structurelib.constructableTrigger");
         setTextureName(MOD_ID + ":itemConstructableTrigger");
+        setHasSubtypes(true);
         setCreativeTab(StructureLib.creativeTab);
     }
+
+    public enum Mode {
+        Default, Debug
+    }
+
+    @Override
+    public String getItemStackDisplayName(ItemStack itemStack) {
+        if (itemStack.getItemDamage() == 0) return super.getItemStackDisplayName(itemStack);
+        return String.format("%s (%s)", super.getItemStackDisplayName(itemStack),
+                StatCollector.translateToLocal("item.structurelib.constructableTrigger.debug"));
+    }
+
 
     @Override
     public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
