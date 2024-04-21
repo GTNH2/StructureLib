@@ -26,7 +26,7 @@ import static com.gtnewhorizon.structurelib.StructureLibAPI.getBlockHint;
 
 public class ItemDebugStructureWriter extends Item {
     public enum Mode {
-        SetCorners, SetController, Build, Refresh, Clear
+        Build, Clear
     }
 
     @SideOnly(Side.CLIENT)
@@ -86,7 +86,7 @@ public class ItemDebugStructureWriter extends Item {
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
-        doStuff(itemStack, world, Vec3Impl.NULL_VECTOR, player);
+        doStuff(itemStack, world, null, player);
         return itemStack;
     }
 
@@ -95,8 +95,9 @@ public class ItemDebugStructureWriter extends Item {
         if (mode == Mode.Clear) {
             StructureUtility.LAST_NICE_CHARS_POINTER = 0;
             StructureUtility.GLOBAL_MAP.clear();
-            player.addChatMessage(new ChatComponentText("Clearing Globawdl Maps"));
+            player.addChatMessage(new ChatComponentText("Clearing Global Maps"));
         } else {
+            if (pos == null) return;
             if (pos1 == null) {
                 pos1 = pos;
                 player.addChatMessage(new ChatComponentText("Set Position 1"));
@@ -172,25 +173,23 @@ public class ItemDebugStructureWriter extends Item {
         description.add(modeString);
 
         switch (mode) {
-            case SetCorners:
-                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.1"));
-                description.add("");
-                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.2"));
-                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.3"));
-                break;
-            case SetController:
-                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.4"));
-                break;
+//            case SetCorners:
+//                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.1"));
+//                description.add("");
+//                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.2"));
+//                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.3"));
+//                break;
+//            case SetController:
+//                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.4"));
+//                break;
             case Build:
                 description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.5"));
                 description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.6"));
-                description.add("");
                 description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.7"));
-                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.8"));
                 break;
-            case Refresh:
-                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.9"));
-                break;
+//            case Refresh:
+//                description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.9"));
+//                break;
             case Clear:
                 description.add(StatCollector.translateToLocal("item.structurelib.debugStructureWriter.desc.10"));
                 break;

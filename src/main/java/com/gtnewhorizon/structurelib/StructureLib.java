@@ -53,11 +53,11 @@ public class StructureLib {
 
 	public static final CommandStructureLib commandStructureLib = new CommandStructureLib();
 
-	static Block blockHint;
-	static Item itemBlockHint;
-	static Item itemFrontRotationTool;
-	static Item itemConstructableTrigger;
-	static Item itemDebugStructureWriter;
+	public static Block blockHint;
+	public static Item itemBlockHint;
+	public static Item itemFrontRotationTool;
+	public static Item itemConstructableTrigger;
+	public static Item itemDebugStructureWriter;
 	public static final CreativeTabs creativeTab = new CreativeTabs("structurelib") {
 		@Override
 		@SideOnly(Side.CLIENT)
