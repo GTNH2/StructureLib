@@ -46,11 +46,11 @@ public class StructureLib {
 		net.registerMessage(AlignmentMessage.ServerHandler.class, AlignmentMessage.AlignmentQuery.class, 0, Side.SERVER);
 		net.registerMessage(AlignmentMessage.ClientHandler.class, AlignmentMessage.AlignmentData.class, 1, Side.CLIENT);
 
-		net.registerMessage(UpdateDebugWriterModePacket.class, UpdateDebugWriterModePacket.class, 0, Side.CLIENT);
-		net.registerMessage(UpdateDebugWriterModePacket.class, UpdateDebugWriterModePacket.class, 0, Side.SERVER);
+		net.registerMessage(UpdateDebugWriterModePacket.class, UpdateDebugWriterModePacket.class, 2, Side.CLIENT);
+		net.registerMessage(UpdateDebugWriterModePacket.class, UpdateDebugWriterModePacket.class, 3, Side.SERVER);
 
-		net.registerMessage(ScrollConstructablePacket.class, ScrollConstructablePacket.class, 0, Side.CLIENT);
-		net.registerMessage(ScrollConstructablePacket.class, ScrollConstructablePacket.class, 0, Side.SERVER);
+		net.registerMessage(ScrollConstructablePacket.class, ScrollConstructablePacket.class, 4, Side.CLIENT);
+		net.registerMessage(ScrollConstructablePacket.class, ScrollConstructablePacket.class, 5, Side.SERVER);
 	}
 
 	public static final XSTR RANDOM = new XSTR();
