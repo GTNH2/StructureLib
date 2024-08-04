@@ -40,12 +40,12 @@ item.structurelib.frontRotationTool.desc.1=Rotates only the front panel,
 item.structurelib.frontRotationTool.desc.2=which allows structure rotation.
 
 item.structurelib.constructableTrigger.name=Structure Blueprint
-item.structurelib.constructableTrigger.debug=Debug
-item.structurelib.constructableTrigger.desc.0=Triggers Constructable Interface
-item.structurelib.constructableTrigger.desc.1=Shows multiblock construction details,
-item.structurelib.constructableTrigger.desc.2=just Use on a multiblock controller.
-item.structurelib.constructableTrigger.desc.3=(Sneak Use in creative to build)
-item.structurelib.constructableTrigger.desc.4=Quantity affects tier/mode/type
+item.structurelib.constructableTrigger.debug=§cDebug§r
+item.structurelib.constructableTrigger.desc.0=§7R-Click multiblock controllers to show construction details.
+item.structurelib.constructableTrigger.desc.1=§7Shift+R-Click in creative mode to build structures instantly.
+item.structurelib.constructableTrigger.desc.2=§6Blueprint§e quantity §6affects the structure's final tier/mode/type.
+item.structurelib.constructableTrigger.desc.3=§7Shift+Scroll to toggle §cDebug§7 mode.
+item.structurelib.constructableTrigger.desc.4=§7Debug mode highlights issues with your structures in §cred§7.
 
 structurelib.blockhint.desc.0=Helps while building
 structurelib.blockhint.0.name=Hint 1 dot

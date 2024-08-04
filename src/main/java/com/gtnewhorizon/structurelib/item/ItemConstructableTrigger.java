@@ -62,10 +62,10 @@ public class ItemConstructableTrigger extends Item {
     @SuppressWarnings("unchecked")
     @Override
     public void addInformation(ItemStack aStack, EntityPlayer ep, List aList, boolean boo) {
-        aList.add(translateToLocal("item.structurelib.constructableTrigger.desc.0"));//Triggers Constructable Interface
-        aList.add(BLUE + translateToLocal("item.structurelib.constructableTrigger.desc.1"));//Shows multiblock construction details,
-        aList.add(BLUE + translateToLocal("item.structurelib.constructableTrigger.desc.2"));//just Use on a multiblock controller.
-        aList.add(BLUE + translateToLocal("item.structurelib.constructableTrigger.desc.3"));//(Sneak Use in creative to build)
-        aList.add(BLUE + translateToLocal("item.structurelib.constructableTrigger.desc.4"));//Quantity affects tier/mode/type
+        aList.add(translateToLocal("item.structurelib.constructableTrigger.desc.0"));//R-Click multiblock controllers to show construction details.
+        aList.add(translateToLocal("item.structurelib.constructableTrigger.desc.1"));//Shift+R-Click in creative mode to build structures instantly.
+        aList.add(translateToLocal("item.structurelib.constructableTrigger.desc.2"));//Blueprint quantity affects the structure's final tier/mode/type.
+        aList.add(translateToLocal("item.structurelib.constructableTrigger.desc.3"));//Shift+Scroll to toggle Debug mode.
+        aList.add(translateToLocal("item.structurelib.constructableTrigger.desc.4"));//Debug mode highlights issues with your structures in red.
     }
 }
