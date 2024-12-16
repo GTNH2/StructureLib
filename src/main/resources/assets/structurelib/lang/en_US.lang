@@ -71,6 +71,9 @@ structurelib.blockhint.15.name=Hint error
 structurelib.blockhint.desc.5=ERROR, what did u expect?
 itemGroup.structurelib=StructureLib
 
+structurelib.blockname.no_air="Not Air"
+structurelib.blockname.error="Error"
+
 structurelib.config.client=Client Side Configurations
 structurelib.config.client.tooltip=Configurations that only changes how the game looks like, but not how it functions.
 structurelib.config.client.hologram=Hologram Configurations

@@ -10,4 +10,8 @@ public interface ITileAdder<T> {
 	 * @return managed to add hatch (structure still valid)
 	 */
 	boolean apply(T t, TileEntity tileEntity);
+
+	default String getName(T t) {
+		return "UNKNOWN_TILE";
+	}
 }
