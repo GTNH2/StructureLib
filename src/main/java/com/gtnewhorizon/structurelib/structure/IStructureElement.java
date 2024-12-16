@@ -13,8 +13,8 @@ public interface IStructureElement<T> {
 
 	boolean placeBlock(T t, World world, int x, int y, int z, ItemStack trigger);
 
-	default String getBlockName(T t, World world, int x, int y, int z) {
-		return "UNKNOWN_BLOCK";
+	default String[] getBlockName(T t, World world, int x, int y, int z) {
+		return new String[]{"UNKNOWN_BLOCK"};
 	}
 
 	default int getStepA() {

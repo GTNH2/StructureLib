@@ -1,7 +1,11 @@
 package com.gtnewhorizon.structurelib.structure;
 
+import lombok.val;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Use StructureUtility to instantiate
@@ -37,5 +41,14 @@ public interface IStructureElementChain<T> extends IStructureElement<T> {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	default String[] getBlockName(T t, World world, int x, int y, int z) {
+		ArrayList<String> list = new ArrayList<>();
+		for (val element : fallbacks()) {
+            list.addAll(Arrays.asList(element.getBlockName(t, world, x, y, z)));
+		}
+		return list.toArray(new String[0]);
 	}
 }

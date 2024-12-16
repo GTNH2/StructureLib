@@ -11,7 +11,7 @@ public interface ITileAdder<T> {
 	 */
 	boolean apply(T t, TileEntity tileEntity);
 
-	default String getName(T t) {
-		return "UNKNOWN_TILE";
+	default String[] getName(T t) {
+		return new String[]{"UNKNOWN_TILE"};
 	}
 }

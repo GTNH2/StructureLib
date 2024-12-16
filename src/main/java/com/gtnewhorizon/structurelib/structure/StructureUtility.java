@@ -60,8 +60,8 @@ public class StructureUtility {
 		}
 
 		@Override
-		public String getBlockName(Object o, World world, int x, int y, int z) {
-			return Blocks.air.getLocalizedName();
+		public String[] getBlockName(Object o, World world, int x, int y, int z) {
+			return new String[]{Blocks.air.getLocalizedName()};
 		}
 	};
 	@SuppressWarnings("rawtypes")
@@ -84,8 +84,8 @@ public class StructureUtility {
 		}
 
 		@Override
-		public String getBlockName(Object o, World world, int x, int y, int z) {
-			return StatCollector.translateToLocal("structurelib.blockname.no_air");
+		public String[] getBlockName(Object o, World world, int x, int y, int z) {
+			return new String[]{StatCollector.translateToLocal("structurelib.blockname.no_air")};
 		}
 	};
 	@SuppressWarnings("rawtypes")
@@ -107,8 +107,8 @@ public class StructureUtility {
 		}
 
 		@Override
-		public String getBlockName(Object o, World world, int x, int y, int z) {
-			return StatCollector.translateToLocal("structurelib.blockname.error");
+		public String[] getBlockName(Object o, World world, int x, int y, int z) {
+			return new String[]{StatCollector.translateToLocal("structurelib.blockname.error")};
 		}
 	};
 
@@ -158,8 +158,8 @@ public class StructureUtility {
 			}
 
 			@Override
-			public String getBlockName(Object o, World world, int x, int y, int z) {
-				return StatCollector.translateToLocal("structurelib.blockhint."+meta+"name");
+			public String[] getBlockName(Object o, World world, int x, int y, int z) {
+				return new String[]{StatCollector.translateToLocal("structurelib.blockhint."+meta+"name")};
 			}
 		};
 	}
@@ -594,11 +594,11 @@ public class StructureUtility {
 				}
 
 				@Override
-				public String getBlockName(T t, World world, int x, int y, int z) {
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
 					if (StatCollector.canTranslate(block.getUnlocalizedName()+defaultMeta+".name")) {
-						return StatCollector.translateToLocal(block.getUnlocalizedName()+defaultMeta+".name");
+						return new String[]{StatCollector.translateToLocal(block.getUnlocalizedName()+defaultMeta+".name")};
 					}
-					return block.getLocalizedName();
+					return new String[]{block.getLocalizedName()};
 				}
 			};
 		} else {
@@ -622,11 +622,11 @@ public class StructureUtility {
 				}
 
 				@Override
-				public String getBlockName(T t, World world, int x, int y, int z) {
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
 					if (StatCollector.canTranslate(block.getUnlocalizedName()+defaultMeta+".name")) {
-						return StatCollector.translateToLocal(block.getUnlocalizedName()+defaultMeta+".name");
+						return new String[]{StatCollector.translateToLocal(block.getUnlocalizedName()+defaultMeta+".name")};
 					}
-					return block.getLocalizedName();
+					return new String[]{block.getLocalizedName()};
 				}
 			};
 		}
@@ -659,8 +659,8 @@ public class StructureUtility {
 				}
 
 				@Override
-				public String getBlockName(T t, World world, int x, int y, int z) {
-					return block.getLocalizedName();
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
+					return new String[]{block.getLocalizedName()};
 				}
 			};
 		} else {
@@ -683,8 +683,8 @@ public class StructureUtility {
 				}
 
 				@Override
-				public String getBlockName(T t, World world, int x, int y, int z) {
-					return block.getLocalizedName();
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
+					return new String[]{block.getLocalizedName()};
 				}
 			};
 		}
@@ -737,11 +737,11 @@ public class StructureUtility {
 				}
 
 				@Override
-				public String getBlockName(T t, World world, int x, int y, int z) {
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
 					if (StatCollector.canTranslate(defaultBlock.getUnlocalizedName()+defaultMeta+".name")) {
-						return StatCollector.translateToLocal(defaultBlock.getUnlocalizedName()+defaultMeta+".name");
+						return new String[]{StatCollector.translateToLocal(defaultBlock.getUnlocalizedName()+defaultMeta+".name")};
 					}
-					return defaultBlock.getLocalizedName();
+					return new String[]{defaultBlock.getLocalizedName()};
 				}
 			};
 		} else {
@@ -765,11 +765,11 @@ public class StructureUtility {
 				}
 
 				@Override
-				public String getBlockName(T t, World world, int x, int y, int z) {
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
 					if (StatCollector.canTranslate(defaultBlock.getUnlocalizedName()+defaultMeta+".name")) {
-						return StatCollector.translateToLocal(defaultBlock.getUnlocalizedName()+defaultMeta+".name");
+						return new String[]{StatCollector.translateToLocal(defaultBlock.getUnlocalizedName()+defaultMeta+".name")};
 					}
-					return defaultBlock.getLocalizedName();
+					return new String[]{defaultBlock.getLocalizedName()};
 				}
 			};
 		}
@@ -798,7 +798,7 @@ public class StructureUtility {
 			}
 
 			@Override
-			public String getBlockName(T t, World world, int x, int y, int z) {
+			public String[] getBlockName(T t, World world, int x, int y, int z) {
 				return iTileAdder.getName(t);
 			}
 		};
@@ -823,11 +823,11 @@ public class StructureUtility {
 			}
 
 			@Override
-			public String getBlockName(T t, World world, int x, int y, int z) {
+			public String[] getBlockName(T t, World world, int x, int y, int z) {
 				if (StatCollector.canTranslate(hintBlock.getUnlocalizedName()+hintMeta+".name")) {
-					return StatCollector.translateToLocal(hintBlock.getUnlocalizedName()+hintMeta+".name");
+					return new String[]{StatCollector.translateToLocal(hintBlock.getUnlocalizedName()+hintMeta+".name")};
 				}
-				return hintBlock.getLocalizedName();
+				return new String[]{hintBlock.getLocalizedName()};
 			}
 		};
 	}
@@ -859,7 +859,7 @@ public class StructureUtility {
 			}
 
 			@Override
-			public String getBlockName(T t, World world, int x, int y, int z) {
+			public String[] getBlockName(T t, World world, int x, int y, int z) {
 				return element.getBlockName(t, world, x, y, z);
 			}
 		};
