@@ -15,6 +15,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +58,11 @@ public class StructureUtility {
 			world.setBlock(x, y, z, Blocks.air, 0, 2);
 			return false;
 		}
+
+		@Override
+		public String[] getBlockName(Object o, World world, int x, int y, int z) {
+			return new String[]{Blocks.air.getLocalizedName()};
+		}
 	};
 	@SuppressWarnings("rawtypes")
 	private static final IStructureElement NOT_AIR = new IStructureElement() {
@@ -76,6 +82,11 @@ public class StructureUtility {
 			world.setBlock(x, y, z, StructureLibAPI.getBlockHint(), 14, 2);
 			return true;
 		}
+
+		@Override
+		public String[] getBlockName(Object o, World world, int x, int y, int z) {
+			return new String[]{StatCollector.translateToLocal("structurelib.blockname.no_air")};
+		}
 	};
 	@SuppressWarnings("rawtypes")
 	private static final IStructureElement ERROR = new IStructureElement() {
@@ -93,6 +104,11 @@ public class StructureUtility {
 		@Override
 		public boolean placeBlock(Object o, World world, int x, int y, int z, ItemStack trigger) {
 			return true;
+		}
+
+		@Override
+		public String[] getBlockName(Object o, World world, int x, int y, int z) {
+			return new String[]{StatCollector.translateToLocal("structurelib.blockname.error")};
 		}
 	};
 
@@ -139,6 +155,11 @@ public class StructureUtility {
 			public boolean spawnHint(T t, World world, int x, int y, int z, ItemStack trigger) {
 				StructureLibAPI.hintParticle(world, x, y, z, StructureLibAPI.getBlockHint(), meta);
 				return false;
+			}
+
+			@Override
+			public String[] getBlockName(Object o, World world, int x, int y, int z) {
+				return new String[]{StatCollector.translateToLocal("structurelib.blockhint."+meta+"name")};
 			}
 		};
 	}
@@ -571,6 +592,14 @@ public class StructureUtility {
 					StructureLibAPI.hintParticle(world, x, y, z, defaultBlock, defaultMeta);
 					return true;
 				}
+
+				@Override
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
+					if (StatCollector.canTranslate(block.getUnlocalizedName()+defaultMeta+".name")) {
+						return new String[]{StatCollector.translateToLocal(block.getUnlocalizedName()+defaultMeta+".name")};
+					}
+					return new String[]{block.getLocalizedName()};
+				}
 			};
 		} else {
 			return new IStructureElement<T>() {
@@ -590,6 +619,14 @@ public class StructureUtility {
 				public boolean spawnHint(T t, World world, int x, int y, int z, ItemStack trigger) {
 					StructureLibAPI.hintParticle(world, x, y, z, defaultBlock, defaultMeta);
 					return true;
+				}
+
+				@Override
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
+					if (StatCollector.canTranslate(block.getUnlocalizedName()+defaultMeta+".name")) {
+						return new String[]{StatCollector.translateToLocal(block.getUnlocalizedName()+defaultMeta+".name")};
+					}
+					return new String[]{block.getLocalizedName()};
 				}
 			};
 		}
@@ -620,6 +657,11 @@ public class StructureUtility {
 					StructureLibAPI.hintParticle(world, x, y, z, defaultBlock, defaultMeta);
 					return true;
 				}
+
+				@Override
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
+					return new String[]{block.getLocalizedName()};
+				}
 			};
 		} else {
 			return new IStructureElement<T>() {
@@ -638,6 +680,11 @@ public class StructureUtility {
 				public boolean spawnHint(T t, World world, int x, int y, int z, ItemStack trigger) {
 					StructureLibAPI.hintParticle(world, x, y, z, defaultBlock, defaultMeta);
 					return true;
+				}
+
+				@Override
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
+					return new String[]{block.getLocalizedName()};
 				}
 			};
 		}
@@ -688,6 +735,14 @@ public class StructureUtility {
 					StructureLibAPI.hintParticle(world, x, y, z, defaultBlock, defaultMeta);
 					return true;
 				}
+
+				@Override
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
+					if (StatCollector.canTranslate(defaultBlock.getUnlocalizedName()+defaultMeta+".name")) {
+						return new String[]{StatCollector.translateToLocal(defaultBlock.getUnlocalizedName()+defaultMeta+".name")};
+					}
+					return new String[]{defaultBlock.getLocalizedName()};
+				}
 			};
 		} else {
 			return new IStructureElement<T>() {
@@ -707,6 +762,14 @@ public class StructureUtility {
 				public boolean spawnHint(T t, World world, int x, int y, int z, ItemStack trigger) {
 					StructureLibAPI.hintParticle(world, x, y, z, defaultBlock, defaultMeta);
 					return true;
+				}
+
+				@Override
+				public String[] getBlockName(T t, World world, int x, int y, int z) {
+					if (StatCollector.canTranslate(defaultBlock.getUnlocalizedName()+defaultMeta+".name")) {
+						return new String[]{StatCollector.translateToLocal(defaultBlock.getUnlocalizedName()+defaultMeta+".name")};
+					}
+					return new String[]{defaultBlock.getLocalizedName()};
 				}
 			};
 		}
@@ -733,6 +796,11 @@ public class StructureUtility {
 				StructureLibAPI.hintParticle(world, x, y, z, hintBlock, hintMeta);
 				return true;
 			}
+
+			@Override
+			public String[] getBlockName(T t, World world, int x, int y, int z) {
+				return iTileAdder.getName(t);
+			}
 		};
 	}
 
@@ -752,6 +820,14 @@ public class StructureUtility {
 			public boolean spawnHint(T t, World world, int x, int y, int z, ItemStack trigger) {
 				StructureLibAPI.hintParticle(world, x, y, z, hintBlock, hintMeta);
 				return true;
+			}
+
+			@Override
+			public String[] getBlockName(T t, World world, int x, int y, int z) {
+				if (StatCollector.canTranslate(hintBlock.getUnlocalizedName()+hintMeta+".name")) {
+					return new String[]{StatCollector.translateToLocal(hintBlock.getUnlocalizedName()+hintMeta+".name")};
+				}
+				return new String[]{hintBlock.getLocalizedName()};
 			}
 		};
 	}
@@ -780,6 +856,11 @@ public class StructureUtility {
 			@Override
 			public boolean spawnHint(T t, World world, int x, int y, int z, ItemStack trigger) {
 				return element.spawnHint(t, world, x, y, z, trigger);
+			}
+
+			@Override
+			public String[] getBlockName(T t, World world, int x, int y, int z) {
+				return element.getBlockName(t, world, x, y, z);
 			}
 		};
 	}

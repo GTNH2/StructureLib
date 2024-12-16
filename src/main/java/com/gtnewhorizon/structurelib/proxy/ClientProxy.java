@@ -78,6 +78,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void addClientSideChatMessages(String... messages) {
         GuiNewChat chat = Minecraft.getMinecraft().ingameGUI.getChatGUI();
+        if (messages == null) return;
         for (String s : messages) {
             chat.printChatMessage(new ChatComponentText(s));
         }
