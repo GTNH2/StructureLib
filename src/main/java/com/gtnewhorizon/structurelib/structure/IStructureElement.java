@@ -1,6 +1,5 @@
 package com.gtnewhorizon.structurelib.structure;
 
-import com.gtnewhorizon.structurelib.structure.adders.BlockInfo;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -15,7 +14,7 @@ public interface IStructureElement<T> {
 	boolean placeBlock(T t, World world, int x, int y, int z, ItemStack trigger);
 
 	default BlockInfo[] getBlockInfo(T t, World world, int x, int y, int z) {
-		return new BlockInfo[]{new BlockInfo(null,"UNKNOWN_BLOCK")};
+		return new BlockInfo[]{new BlockInfoError("UNKNOWN_BLOCK")};
 	}
 
 	default int getStepA() {

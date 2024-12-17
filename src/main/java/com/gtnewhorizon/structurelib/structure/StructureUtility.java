@@ -4,7 +4,6 @@ import com.gtnewhorizon.structurelib.StructureLibAPI;
 import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
 import com.gtnewhorizon.structurelib.compat.carp.CarpInterop;
 import com.gtnewhorizon.structurelib.compat.carp.CarpInteropImpl;
-import com.gtnewhorizon.structurelib.structure.adders.BlockInfo;
 import com.gtnewhorizon.structurelib.structure.adders.IBlockAdder;
 import com.gtnewhorizon.structurelib.structure.adders.ITileAdder;
 import com.gtnewhorizon.structurelib.util.Box;
@@ -85,7 +84,7 @@ public class StructureUtility {
 
 		@Override
 		public BlockInfo[] getBlockInfo(Object o, World world, int x, int y, int z) {
-			return new BlockInfo[]{new BlockInfo(Blocks.air,"structurelib.blockname.no_air")};
+			return new BlockInfo[]{new BlockInfoError("structurelib.blockname.no_air")};
 		}
 	};
 	@SuppressWarnings("rawtypes")
@@ -108,8 +107,7 @@ public class StructureUtility {
 
 		@Override
 		public BlockInfo[] getBlockInfo(Object o, World world, int x, int y, int z) {
-
-			return new BlockInfo[]{ new BlockInfo(null,"structurelib.blockname.error")};
+			return new BlockInfo[]{ new BlockInfoError("structurelib.blockname.error")};
 		}
 	};
 

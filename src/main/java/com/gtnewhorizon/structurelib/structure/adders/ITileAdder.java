@@ -1,5 +1,6 @@
 package com.gtnewhorizon.structurelib.structure.adders;
 
+import com.gtnewhorizon.structurelib.structure.BlockInfo;
 import net.minecraft.tileentity.TileEntity;
 
 public interface ITileAdder<T> {

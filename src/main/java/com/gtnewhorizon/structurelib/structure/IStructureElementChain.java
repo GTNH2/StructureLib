@@ -1,6 +1,5 @@
 package com.gtnewhorizon.structurelib.structure;
 
-import com.gtnewhorizon.structurelib.structure.adders.BlockInfo;
 import lombok.val;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
