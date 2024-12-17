@@ -2,7 +2,6 @@ package com.gtnewhorizon.structurelib.structure;
 
 import com.gtnewhorizon.structurelib.StructureLib;
 import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -86,12 +85,12 @@ public interface IStructureDefinition<T> {
 								if (callBack != null) {
 									callBack.onFail(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
 								}
-
 								if (DEBUG_MODE) {
 									StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] failed @ " +
 											Arrays.toString(xyz) + " " + Arrays.toString(abc));
 								}
-								return false;
+								if (callBack == null || callBack.stopOnFail())
+									return false;
 							}
 						} else {
 							if (callBack != null) {
@@ -101,7 +100,8 @@ public interface IStructureDefinition<T> {
 								StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] !blockExists @ " +
 										Arrays.toString(xyz) + " " + Arrays.toString(abc));
 							}
-							return false;
+							if (callBack == null || callBack.stopOnFail())
+								return false;
 						}
 						abc[0] += 1;
 					}
@@ -127,7 +127,8 @@ public interface IStructureDefinition<T> {
 									StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] failed @ " +
 											Arrays.toString(xyz) + " " + Arrays.toString(abc));
 								}
-								return false;
+								if (callBack == null || callBack.stopOnFail())
+									return false;
 							}
 						} else {
 							if (callBack != null) {
@@ -156,6 +157,9 @@ public interface IStructureDefinition<T> {
 						xyz[2] += basePositionZ;
 
 						element.spawnHint(object, world, xyz[0], xyz[1], xyz[2], trigger);
+						if (callBack != null) {
+							callBack.onHintCheck(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
+						}
 
 						abc[0] += 1;
 					}
@@ -175,6 +179,9 @@ public interface IStructureDefinition<T> {
 						if (world.blockExists(xyz[0], xyz[1], xyz[2])) {
 							element.placeBlock(object, world, xyz[0], xyz[1], xyz[2], trigger);
 						}
+						if (callBack != null) {
+							callBack.onHintCheck(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
+						}
 						abc[0] += 1;
 					}
 				}
@@ -189,5 +196,9 @@ public interface IStructureDefinition<T> {
 
 	interface FailedCallback<T> {
 		void onFail(int x, int y, int z,int a,int b,int c,World world,T object ,IStructureElement<T> ExpectedElement);
+		default void onHintCheck(int x, int y, int z, int a, int b, int c, World world, T object , IStructureElement<T> element){}
+		default boolean stopOnFail() {
+			return true;
+		}
 	}
 }
