@@ -1,5 +1,6 @@
 package com.gtnewhorizon.structurelib.structure;
 
+import com.gtnewhorizon.structurelib.structure.adders.BlockInfo;
 import lombok.val;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -44,11 +45,11 @@ public interface IStructureElementChain<T> extends IStructureElement<T> {
 	}
 
 	@Override
-	default String[] getBlockName(T t, World world, int x, int y, int z) {
-		ArrayList<String> list = new ArrayList<>();
+	default BlockInfo[] getBlockInfo(T t, World world, int x, int y, int z) {
+		ArrayList<BlockInfo> list = new ArrayList<>();
 		for (val element : fallbacks()) {
-            list.addAll(Arrays.asList(element.getBlockName(t, world, x, y, z)));
+            list.addAll(Arrays.asList(element.getBlockInfo(t, world, x, y, z)));
 		}
-		return list.toArray(new String[0]);
+		return list.toArray(new BlockInfo[0]);
 	}
 }
