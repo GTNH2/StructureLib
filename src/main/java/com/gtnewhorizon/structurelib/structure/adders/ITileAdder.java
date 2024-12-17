@@ -1,6 +1,7 @@
 package com.gtnewhorizon.structurelib.structure.adders;
 
 import com.gtnewhorizon.structurelib.structure.BlockInfo;
+import com.gtnewhorizon.structurelib.structure.BlockInfoError;
 import net.minecraft.tileentity.TileEntity;
 
 public interface ITileAdder<T> {
@@ -13,6 +14,6 @@ public interface ITileAdder<T> {
 	boolean apply(T t, TileEntity tileEntity);
 
 	default BlockInfo[] getBlockInfo(T t) {
-		return new BlockInfo[]{new BlockInfo(null,"UNKNOWN_TILE")};
+		return new BlockInfo[]{new BlockInfoError("UNKNOWN_TILE")};
 	}
 }
