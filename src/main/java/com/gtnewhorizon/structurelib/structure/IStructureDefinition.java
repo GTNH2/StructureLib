@@ -2,6 +2,9 @@ package com.gtnewhorizon.structurelib.structure;
 
 import com.gtnewhorizon.structurelib.StructureLib;
 import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -24,37 +27,92 @@ public interface IStructureDefinition<T> {
 	default boolean check(T object, String piece, World world, ExtendedFacing extendedFacing,
 						  int basePositionX, int basePositionY, int basePositionZ,
 						  int basePositionA, int basePositionB, int basePositionC,
-						  boolean forceCheckAllBlocks, FailedCallback<T> callBack) {
-		return iterate(object, null, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
-				basePositionA, basePositionB, basePositionC, false, forceCheckAllBlocks,callBack);
+						  boolean forceCheckAllBlocks) {
+		return this.check(object, piece, world, extendedFacing,
+						  basePositionX, basePositionY, basePositionZ,
+						  basePositionA, basePositionB, basePositionC,
+						  forceCheckAllBlocks, this::noOpOnScan);
+	}
+
+	default boolean check(T object, String piece, World world, ExtendedFacing extendedFacing,
+						  int basePositionX, int basePositionY, int basePositionZ,
+						  int basePositionA, int basePositionB, int basePositionC,
+						  boolean forceCheckAllBlocks, 
+						  @NotNull Callback<T> callBack) {
+		return iterate(object, null, getStructureFor(piece), world, extendedFacing,
+					   basePositionX, basePositionY, basePositionZ,
+					   basePositionA, basePositionB, basePositionC,
+					   false, forceCheckAllBlocks,
+					   callBack);
 	}
 
 	default boolean hints(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing,
 						  int basePositionX, int basePositionY, int basePositionZ,
-						  int basePositionA, int basePositionB, int basePositionC, FailedCallback<T> callBack) {
-		return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
-				basePositionA, basePositionB, basePositionC, true, null,callBack);
+						  int basePositionA, int basePositionB, int basePositionC) {
+		return this.hints(object, trigger, piece, world, extendedFacing,
+						  basePositionX, basePositionY, basePositionZ,
+						  basePositionA, basePositionB, basePositionC,
+						  this::noOpOnScan);
+	}
+
+	default boolean hints(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing,
+						  int basePositionX, int basePositionY, int basePositionZ,
+						  int basePositionA, int basePositionB, int basePositionC,
+						  @NotNull Callback<T> callBack) {
+		return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, 
+					   basePositionX, basePositionY, basePositionZ, 
+					   basePositionA, basePositionB, basePositionC, 
+					   true, null, 
+					   callBack);
 	}
 
 	default boolean build(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing,
 						  int basePositionX, int basePositionY, int basePositionZ,
-						  int basePositionA, int basePositionB, int basePositionC, FailedCallback<T> callBack) {
-		return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
-				basePositionA, basePositionB, basePositionC, false, null,callBack);
+						  int basePositionA, int basePositionB, int basePositionC) {
+		return this.build(object, trigger, piece, world, extendedFacing,
+						  basePositionX, basePositionY, basePositionZ,
+						  basePositionA, basePositionB, basePositionC,
+						  this::noOpOnScan);
+	}
+
+	default boolean build(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing,
+						  int basePositionX, int basePositionY, int basePositionZ,
+						  int basePositionA, int basePositionB, int basePositionC,
+						  @NotNull Callback<T> callBack) {
+		return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, 
+					   basePositionX, basePositionY, basePositionZ, 
+					   basePositionA, basePositionB, basePositionC, 
+					   false, null, 
+					   callBack);
 	}
 
 	default boolean buildOrHints(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing,
 								 int basePositionX, int basePositionY, int basePositionZ,
 								 int basePositionA, int basePositionB, int basePositionC,
-								 boolean hintsOnly, FailedCallback<T> callBack) {
-		return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, basePositionX, basePositionY, basePositionZ,
-				basePositionA, basePositionB, basePositionC, hintsOnly, null,callBack);
+								 boolean hintsOnly) {
+		return this.buildOrHints(object, trigger, piece, world, extendedFacing,
+								 basePositionX, basePositionY, basePositionZ,
+								 basePositionA, basePositionB, basePositionC,
+								 hintsOnly, this::noOpOnScan);
+	}
+	
+	default boolean buildOrHints(T object, ItemStack trigger, String piece, World world, ExtendedFacing extendedFacing,
+								 int basePositionX, int basePositionY, int basePositionZ,
+								 int basePositionA, int basePositionB, int basePositionC,
+								 boolean hintsOnly,
+								 @NotNull Callback<T> callBack) {
+		return iterate(object, trigger, getStructureFor(piece), world, extendedFacing, 
+					   basePositionX, basePositionY, basePositionZ, 
+					   basePositionA, basePositionB, basePositionC, 
+					   hintsOnly, null,
+					   callBack);
 	}
 
 	static <T> boolean iterate(T object, ItemStack trigger, IStructureElement<T>[] elements, World world, ExtendedFacing extendedFacing,
 							   int basePositionX, int basePositionY, int basePositionZ,
 							   int basePositionA, int basePositionB, int basePositionC,
-							   boolean hintsOnly, Boolean checkBlocksIfNotNullForceCheckAllIfTrue, FailedCallback<T> callBack) {
+							   boolean hintsOnly, Boolean checkBlocksIfNotNullForceCheckAllIfTrue, 
+							   @NotNull Callback<T> callBack) {
 		if (world.isRemote ^ hintsOnly) {
 			return false;
 		}
@@ -81,27 +139,37 @@ public interface IStructureDefinition<T> {
 						xyz[2] += basePositionZ;
 
 						if (world.blockExists(xyz[0], xyz[1], xyz[2])) {
-							if (!element.check(object, world, xyz[0], xyz[1], xyz[2])) {
-								if (callBack != null) {
-									callBack.onFail(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
-								}
-								if (DEBUG_MODE) {
-									StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] failed @ " +
-											Arrays.toString(xyz) + " " + Arrays.toString(abc));
-								}
-								if (callBack == null || callBack.stopOnFail())
-									return false;
+							val scanSuccessful = element.check(object, world, xyz[0], xyz[1], xyz[2]);
+
+							if (DEBUG_MODE && !scanSuccessful) {
+								StructureLib.LOGGER.info("Multi [{}, {}, {}] failed @ {} {}",
+														 basePositionX, basePositionY, basePositionZ,
+														 Arrays.toString(xyz),
+														 Arrays.toString(abc));
+							}
+
+							val keepScanning = callBack.onElementScan(xyz[0], xyz[1], xyz[2],
+																	  abc[0], abc[1], abc[2],
+																	  world, object, element, scanSuccessful);
+
+							if (!keepScanning) {
+								return false;
 							}
 						} else {
-							if (callBack != null) {
-								callBack.onFail(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
-							}
+							val keepScanning = callBack.onElementScan(xyz[0], xyz[1], xyz[2],
+																	  abc[0], abc[1], abc[2],
+																	  world, object, element, false);
 							if (DEBUG_MODE) {
-								StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] !blockExists @ " +
-										Arrays.toString(xyz) + " " + Arrays.toString(abc));
+								StructureLib.LOGGER.info("Multi [{}, {}, {}] !blockExists @ {} {}",
+														 basePositionX, basePositionY, basePositionZ,
+														 Arrays.toString(xyz),
+														 Arrays.toString(abc));
+
 							}
-							if (callBack == null || callBack.stopOnFail())
+
+							if (!keepScanning) {
 								return false;
+							}
 						}
 						abc[0] += 1;
 					}
@@ -119,24 +187,36 @@ public interface IStructureDefinition<T> {
 						xyz[2] += basePositionZ;
 
 						if (world.blockExists(xyz[0], xyz[1], xyz[2])) {
-							if (!element.check(object, world, xyz[0], xyz[1], xyz[2])) {
-								if (callBack != null) {
-									callBack.onFail(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
-								}
-								if (DEBUG_MODE) {
-									StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] failed @ " +
-											Arrays.toString(xyz) + " " + Arrays.toString(abc));
-								}
-								if (callBack == null || callBack.stopOnFail())
-									return false;
+							val scanSuccessful = element.check(object, world, xyz[0], xyz[1], xyz[2]);
+
+							if (DEBUG_MODE && !scanSuccessful) {
+								StructureLib.LOGGER.info("Multi [{}, {}, {}] failed @ {} {}",
+														 basePositionX, basePositionY, basePositionZ,
+														 Arrays.toString(xyz),
+														 Arrays.toString(abc));
+							}
+
+							val keepScanning = callBack.onElementScan(xyz[0], xyz[1], xyz[2],
+																	  abc[0], abc[1], abc[2],
+																	  world, object, element, scanSuccessful);
+
+							if (!keepScanning) {
+								return false;
 							}
 						} else {
-							if (callBack != null) {
-								callBack.onFail(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
-							}
+							val keepScanning = callBack.onElementScan(xyz[0], xyz[1], xyz[2],
+																	  abc[0], abc[1], abc[2],
+																	  world, object, element, false);
 							if (DEBUG_MODE) {
-								StructureLib.LOGGER.info("Multi [" + basePositionX + ", " + basePositionY + ", " + basePositionZ + "] !blockExists @ " +
-										Arrays.toString(xyz) + " " + Arrays.toString(abc));
+								StructureLib.LOGGER.info("Multi [{}, {}, {}] !blockExists @ {} {}",
+														 basePositionX, basePositionY, basePositionZ,
+														 Arrays.toString(xyz),
+														 Arrays.toString(abc));
+
+							}
+
+							if (!keepScanning) {
+								return false;
 							}
 						}
 						abc[0] += 1;
@@ -157,11 +237,9 @@ public interface IStructureDefinition<T> {
 						xyz[2] += basePositionZ;
 
 						element.spawnHint(object, world, xyz[0], xyz[1], xyz[2], trigger);
-						if (callBack != null) {
-							callBack.onHintCheck(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
-						}
+                        callBack.onElementScan(xyz[0], xyz[1], xyz[2], abc[0], abc[1], abc[2], world, object, element, true);
 
-						abc[0] += 1;
+                        abc[0] += 1;
 					}
 				}
 			} else {
@@ -179,9 +257,8 @@ public interface IStructureDefinition<T> {
 						if (world.blockExists(xyz[0], xyz[1], xyz[2])) {
 							element.placeBlock(object, world, xyz[0], xyz[1], xyz[2], trigger);
 						}
-						if (callBack != null) {
-							callBack.onHintCheck(xyz[0], xyz[1], xyz[2],abc[0],abc[1],abc[2],world,object,element);
-						}
+
+						callBack.onElementScan(xyz[0], xyz[1], xyz[2], abc[0], abc[1], abc[2], world, object, element, true);
 						abc[0] += 1;
 					}
 				}
@@ -194,11 +271,26 @@ public interface IStructureDefinition<T> {
 		return StructureDefinition.builder();
 	}
 
-	interface FailedCallback<T> {
-		void onFail(int x, int y, int z,int a,int b,int c,World world,T object ,IStructureElement<T> ExpectedElement);
-		default void onHintCheck(int x, int y, int z, int a, int b, int c, World world, T object , IStructureElement<T> element){}
-		default boolean stopOnFail() {
-			return true;
-		}
+	@FunctionalInterface
+	interface Callback<T> {
+		/**
+		 * A callback that gets invoked after each element scan
+		 * @param x
+		 * @param y
+		 * @param z
+		 * @param a
+		 * @param b
+		 * @param c
+		 * @param world
+		 * @param object
+		 * @param element
+		 * @param scanSuccessful
+		 * @return true to continue scanning the structure, false to stop
+		 */
+		boolean onElementScan(int x, int y, int z, int a, int b, int c, World world, T object, IStructureElement<T> element, boolean scanSuccessful);
+	}
+
+	default boolean noOpOnScan(int x, int y, int z, int a, int b, int c, World world, T object, IStructureElement<T> element, boolean scanSuccessful) {
+		return scanSuccessful;
 	}
 }
